@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="mb-4">
+            <h1 class="heading-xl text-dark mb-1">Configuración del Sistema</h1>
+            <p class="body-sm text-muted-2">Estado general y parámetros de la plataforma</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Plan estratégico activo</h3>
+                    {% if config.plan_activo %}
+                    <div class="heading-md text-blue mb-1">{{ config.plan_activo.nombre }}</div>
+                    <div class="caption text-muted-2">v{{ config.plan_activo.version }} · {{ config.plan_activo.ambito|capitalize }}</div>
+                    {% else %}
+                    <p class="text-muted-2 body-sm">Ningún plan activo configurado.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Base de datos</h3>
+                    <div class="d-flex justify-content-between body-sm mb-2">
+                        <span class="text-muted-2">Planes</span>
+                        <span class="fw-bold">{{ config.total_planes }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between body-sm mb-2">
+                        <span class="text-muted-2">Pilares</span>
+                        <span class="fw-bold">{{ config.total_pilares }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between body-sm">
+                        <span class="text-muted-2">Problemas</span>
+                        <span class="fw-bold">{{ config.total_problemas }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Seguridad</h3>
+                    <div class="d-flex justify-content-between body-sm mb-2">
+                        <span class="text-muted-2">Rate limit</span>
+                        <span class="font-monospace body-sm">{{ config.rate_limit }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between body-sm mb-2">
+                        <span class="text-muted-2">CSRF</span>
+                        <span class="badge badge-green">Activo</span>
+                    </div>
+                    <div class="d-flex justify-content-between body-sm">
+                        <span class="text-muted-2">Sesiones</span>
+                        <span class="badge badge-green">HTTPOnly</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Motor SRIE</h3>
+                    <div class="d-flex justify-content-between body-sm mb-2">
+                        <span class="text-muted-2">Modelo actual</span>
+                        <span class="font-monospace body-sm">keyword_match</span>
+                    </div>
+                    <div class="d-flex justify-content-between body-sm mb-2">
+                        <span class="text-muted-2">Niveles de confianza</span>
+                        <span>4 (Alto/Medio/Bajo/Sin clasificar)</span>
+                    </div>
+                    <div class="d-flex justify-content-between body-sm">
+                        <span class="text-muted-2">Estado</span>
+                        <span class="badge badge-green">Operativo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

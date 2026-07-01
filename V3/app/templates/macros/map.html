@@ -1,0 +1,85 @@
+{% macro colombia_map(participaciones_por_dept={}) %}
+<div class="colombia-map-container" id="colombiaMap">
+    <svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" id="svgColombia">
+        <!-- Amazonas -->
+        <path class="dept-path dept-fill-0" data-dept="Amazonas" d="M185,480 L210,470 L235,475 L260,465 L275,480 L265,500 L245,515 L220,520 L195,510 L180,495 Z"/>
+        <!-- Antioquia -->
+        <path class="dept-path dept-fill-0" data-dept="Antioquia" d="M130,240 L155,230 L175,235 L190,225 L200,240 L195,260 L180,275 L160,280 L140,270 L125,255 Z"/>
+        <!-- Arauca -->
+        <path class="dept-path dept-fill-0" data-dept="Arauca" d="M305,230 L330,220 L355,225 L365,240 L355,260 L335,265 L315,255 L305,240 Z"/>
+        <!-- Atlántico -->
+        <path class="dept-path dept-fill-0" data-dept="Atlántico" d="M310,155 L330,150 L345,155 L350,165 L340,175 L320,178 L308,170 Z"/>
+        <!-- Bogotá D.C. -->
+        <path class="dept-path dept-fill-0" data-dept="Bogotá D.C." d="M225,285 L238,280 L248,285 L250,298 L242,308 L230,310 L222,300 Z"/>
+        <!-- Bolívar -->
+        <path class="dept-path dept-fill-0" data-dept="Bolívar" d="M275,310 L300,300 L320,305 L335,315 L330,340 L315,355 L295,350 L278,340 L270,325 Z"/>
+        <!-- Boyacá -->
+        <path class="dept-path dept-fill-0" data-dept="Boyacá" d="M215,215 L240,205 L260,210 L270,225 L265,245 L250,260 L230,265 L215,255 L210,235 Z"/>
+        <!-- Caldas -->
+        <path class="dept-path dept-fill-0" data-dept="Caldas" d="M165,265 L185,258 L200,262 L210,275 L205,290 L190,298 L172,295 L162,280 Z"/>
+        <!-- Caquetá -->
+        <path class="dept-path dept-fill-0" data-dept="Caquetá" d="M200,370 L230,360 L260,365 L280,375 L275,400 L255,415 L225,410 L200,400 L190,385 Z"/>
+        <!-- Casanare -->
+        <path class="dept-path dept-fill-0" data-dept="Casanare" d="M265,240 L290,230 L315,235 L325,250 L318,270 L300,278 L278,275 L265,260 Z"/>
+        <!-- Cauca -->
+        <path class="dept-path dept-fill-0" data-dept="Cauca" d="M140,380 L165,370 L185,375 L195,390 L190,410 L175,425 L155,420 L138,405 Z"/>
+        <!-- Cesar -->
+        <path class="dept-path dept-fill-0" data-dept="Cesar" d="M310,185 L335,178 L355,185 L365,200 L358,218 L340,225 L320,220 L308,205 Z"/>
+        <!-- Chocó -->
+        <path class="dept-path dept-fill-0" data-dept="Chocó" d="M95,290 L115,280 L135,285 L145,300 L140,325 L125,340 L105,335 L90,315 Z"/>
+        <!-- Córdoba -->
+        <path class="dept-path dept-fill-0" data-dept="Córdoba" d="M285,180 L305,172 L320,178 L328,192 L322,208 L305,215 L288,210 L280,195 Z"/>
+        <!-- Cundinamarca -->
+        <path class="dept-path dept-fill-0" data-dept="Cundinamarca" d="M195,275 L220,268 L240,272 L255,285 L250,305 L235,318 L215,315 L198,305 L190,290 Z"/>
+        <!-- Guainía -->
+        <path class="dept-path dept-fill-0" data-dept="Guainía" d="M345,120 L375,110 L400,115 L415,135 L408,160 L388,170 L365,165 L348,148 Z"/>
+        <!-- Guaviare -->
+        <path class="dept-path dept-fill-0" data-dept="Guaviare" d="M235,345 L260,335 L285,340 L300,355 L295,375 L275,385 L250,380 L232,365 Z"/>
+        <!-- Huila -->
+        <path class="dept-path dept-fill-0" data-dept="Huila" d="M175,340 L200,330 L220,335 L235,350 L228,370 L210,380 L188,375 L172,360 Z"/>
+        <!-- La Guajira -->
+        <path class="dept-path dept-fill-0" data-dept="La Guajira" d="M335,100 L360,92 L385,98 L398,115 L390,138 L370,148 L348,142 L332,125 Z"/>
+        <!-- Magdalena -->
+        <path class="dept-path dept-fill-0" data-dept="Magdalena" d="M325,140 L350,132 L370,138 L380,155 L372,175 L355,182 L335,178 L322,160 Z"/>
+        <!-- Meta -->
+        <path class="dept-path dept-fill-0" data-dept="Meta" d="M230,305 L260,295 L290,300 L310,315 L305,340 L285,355 L258,350 L235,340 L225,320 Z"/>
+        <!-- Nariño -->
+        <path class="dept-path dept-fill-0" data-dept="Nariño" d="M110,410 L135,400 L158,405 L170,420 L165,445 L148,458 L125,452 L108,435 Z"/>
+        <!-- Norte de Santander -->
+        <path class="dept-path dept-fill-0" data-dept="Norte de Santander" d="M295,195 L320,188 L340,195 L350,210 L342,228 L325,235 L305,230 L292,215 Z"/>
+        <!-- Putumayo -->
+        <path class="dept-path dept-fill-0" data-dept="Putumayo" d="M195,415 L220,405 L248,410 L265,425 L258,448 L238,458 L215,452 L195,440 Z"/>
+        <!-- Quindío -->
+        <path class="dept-path dept-fill-0" data-dept="Quindío" d="M175,290 L190,284 L202,288 L208,300 L202,312 L190,318 L178,312 L172,300 Z"/>
+        <!-- Risaralda -->
+        <path class="dept-path dept-fill-0" data-dept="Risaralda" d="M155,285 L172,278 L188,282 L195,295 L190,310 L175,318 L158,312 L150,298 Z"/>
+        <!-- San Andrés y Providencia -->
+        <path class="dept-path dept-fill-0" data-dept="San Andrés y Providencia" d="M60,80 L80,75 L95,80 L100,92 L92,102 L78,105 L62,98 L55,88 Z"/>
+        <!-- Santander -->
+        <path class="dept-path dept-fill-0" data-dept="Santander" d="M265,205 L290,195 L310,200 L320,215 L315,235 L298,245 L278,240 L262,225 Z"/>
+        <!-- Sucre -->
+        <path class="dept-path dept-fill-0" data-dept="Sucre" d="M290,280 L310,272 L328,278 L338,292 L332,308 L315,315 L295,310 L285,295 Z"/>
+        <!-- Tolima -->
+        <path class="dept-path dept-fill-0" data-dept="Tolima" d="M170,310 L195,302 L218,308 L230,322 L225,342 L208,352 L188,348 L170,335 Z"/>
+        <!-- Valle del Cauca -->
+        <path class="dept-path dept-fill-0" data-dept="Valle del Cauca" d="M115,345 L140,335 L162,340 L175,355 L170,375 L155,388 L132,382 L115,365 Z"/>
+        <!-- Vaupés -->
+        <path class="dept-path dept-fill-0" data-dept="Vaupés" d="M270,375 L295,365 L318,370 L330,385 L325,405 L308,415 L285,410 L268,398 Z"/>
+        <!-- Vichada -->
+        <path class="dept-path dept-fill-0" data-dept="Vichada" d="M310,155 L340,145 L370,150 L390,165 L385,190 L368,200 L345,195 L320,185 L308,170 Z"/>
+    </svg>
+    <div class="map-tooltip" id="mapTooltip">
+        <div class="dept-name" id="tooltipDept"></div>
+        <div class="dept-count" id="tooltipCount"></div>
+    </div>
+</div>
+<div class="map-legend">
+    <span>Sin datos</span>
+    <span class="swatch dept-fill-0"></span>
+    <span class="swatch dept-fill-1"></span>
+    <span class="swatch dept-fill-2"></span>
+    <span class="swatch dept-fill-3"></span>
+    <span class="swatch dept-fill-4"></span>
+    <span>Muchos datos</span>
+</div>
+{% endmacro %}

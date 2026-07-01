@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Exportar — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="mb-4">
+            <h1 class="heading-xl text-dark mb-1">Exportar Datos</h1>
+            <p class="body-sm text-muted-2">Descarga todas las participaciones en diferentes formatos</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card-elevated p-4 text-center h-100">
+                    <div style="width: 64px; height: 64px; background: var(--success-light); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg);">
+                        <i class="bi bi-filetype-csv" style="font-size: 1.75rem; color: var(--success);"></i>
+                    </div>
+                    <h3 class="heading-sm text-dark mb-2">CSV</h3>
+                    <p class="body-sm text-muted-2 mb-4">Formato tabular, compatible con Excel, Google Sheets y herramientas de análisis de datos.</p>
+                    <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary w-100">
+                        <i class="bi bi-download me-2"></i>Descargar CSV
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card-elevated p-4 text-center h-100">
+                    <div style="width: 64px; height: 64px; background: rgba(139, 92, 246, 0.1); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg);">
+                        <i class="bi bi-filetype-json" style="font-size: 1.75rem; color: var(--color-3);"></i>
+                    </div>
+                    <h3 class="heading-sm text-dark mb-2">JSON</h3>
+                    <p class="body-sm text-muted-2 mb-4">Formato estructurado para integración con APIs, dashboards y herramientas de programación.</p>
+                    <a href="{{ url_for('admin.export_json') }}" class="btn btn-primary w-100">
+                        <i class="bi bi-download me-2"></i>Descargar JSON
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card-elevated p-4 text-center h-100">
+                    <div style="width: 64px; height: 64px; background: rgba(245, 158, 11, 0.1); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg);">
+                        <i class="bi bi-file-earmark-excel" style="font-size: 1.75rem; color: var(--warning);"></i>
+                    </div>
+                    <h3 class="heading-sm text-dark mb-2">Excel</h3>
+                    <p class="body-sm text-muted-2 mb-4">Próximamente. Exportación directa a formato .xlsx con formato y estilos.</p>
+                    <button class="btn btn-outline w-100" disabled>
+                        <i class="bi bi-clock me-2"></i>Próximamente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

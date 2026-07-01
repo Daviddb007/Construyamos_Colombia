@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Participaciones — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">Participaciones</h1>
+                <p class="body-sm text-muted-2">{{ pagination.total }} registros en total</p>
+            </div>
+            <a href="{{ url_for('admin.export_csv') }}" class="btn btn-outline">
+                <i class="bi bi-download me-2"></i>Exportar CSV
+            </a>
+        </div>
+
+        <!-- Filters -->
+        <form class="d-flex flex-wrap gap-2 mb-4" method="GET">
+            <input type="text" class="form-control" name="q" value="{{ search }}" placeholder="Buscar..." style="max-width: 280px;">
+            <select class="form-select" name="dept" style="max-width: 220px;">
+                <option value="">Todos los departamentos</option>
+                {% for d in departamentos %}
+                <option value="{{ d }}" {{ 'selected' if d == dept }}>{{ d }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search me-2"></i>Filtrar
+            </button>
+            {% if search or dept %}
+            <a href="{{ url_for('admin.participaciones') }}" class="btn btn-outline">Limpiar</a>
+            {% endif %}
+        </form>
+
+        <!-- Table -->
+        <div class="card-elevated p-4">
+            <div style="overflow-x: auto;">
+                <table class="table-premium w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Departamento</th>
+                            <th>Municipio</th>
+                            <th>Problema</th>
+                            <th>Pilar</th>
+                            <th>Confianza</th>
+                            <th>Fecha</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in participaciones %}
+                        <tr>
+                            <td><span class="badge badge-blue">{{ p.id }}</span></td>
+                            <td class="caption">{{ p.departamento }}</td>
+                            <td class="caption">{{ p.municipio }}</td>
+                            <td class="caption">{{ p.problema_real.nombre if p.problema_real else '—' }}</td>
+                            <td class="caption">{{ p.clasificaciones[0].pilar.nombre if p.clasificaciones else '—' }}</td>
+                            <td>
+                                {% if p.clasificaciones %}
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress-premium" style="width: 60px; height: 4px;">
+                                        <div class="bar" style="width: {{ (p.clasificaciones[0].confianza * 100)|round }}%;"></div>
+                                    </div>
+                                    <span class="caption fw-bold">{{ (p.clasificaciones[0].confianza * 100)|round }}%</span>
+                                </div>
+                                {% else %}
+                                <span class="caption text-muted-2">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="caption">{{ p.created_at.strftime('%Y-%m-%d %H:%M') if p.created_at else '—' }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.participacion_detail', id=p.id) }}" class="btn btn-outline btn-sm">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted-2 py-4">Sin participaciones</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if pagination.pages > 1 %}
+            <div class="d-flex justify-content-center mt-4">
+                <nav>
+                    <ul class="pagination">
+                        {% if pagination.has_prev %}
+                        <li class="page-item"><a class="page-link" href="?page={{ pagination.prev_num }}&q={{ search }}&dept={{ dept }}">Anterior</a></li>
+                        {% endif %}
+                        {% for p_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if p_num %}
+                            <li class="page-item {{ 'active' if p_num == pagination.page }}"><a class="page-link" href="?page={{ p_num }}&q={{ search }}&dept={{ dept }}">{{ p_num }}</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ pagination.next_num }}&q={{ search }}&dept={{ dept }}">Siguiente</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

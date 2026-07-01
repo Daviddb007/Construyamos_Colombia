@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pilar.nombre }} — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">{{ pilar.nombre }}</h1>
+                <p class="body-sm text-muted-2">Pilar {{ pilar.tipo|capitalize }} · {{ count }} clasificaciones</p>
+            </div>
+            <a href="{{ url_for('admin.pilares') }}" class="btn btn-outline">
+                <i class="bi bi-arrow-left me-2"></i>Volver
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card-elevated p-4 mb-4">
+                    <h3 class="heading-sm text-dark mb-3">Líneas estratégicas</h3>
+                    {% if lineas %}
+                    {% for l in lineas %}
+                    <div class="d-flex justify-content-between align-items-center py-2 {{ 'border-bottom' if not loop.last }}">
+                        <div>
+                            <div class="fw-bold body-sm">{{ l.nombre }}</div>
+                            {% if l.descripcion %}
+                            <div class="caption text-muted-2">{{ l.descripcion[:120] }}{{ '...' if l.descripcion|length > 120 }}</div>
+                            {% endif %}
+                        </div>
+                        <span class="caption text-muted-2">#{{ l.orden }}</span>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted-2 body-sm">Sin líneas estratégicas definidas.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card-elevated p-4 mb-4">
+                    <div class="caption text-muted-2 mb-1">ID</div>
+                    <div class="fw-bold">{{ pilar.id }}</div>
+                </div>
+                <div class="card-elevated p-4 mb-4">
+                    <div class="caption text-muted-2 mb-1">Slug</div>
+                    <div class="font-monospace body-sm">{{ pilar.slug }}</div>
+                </div>
+                <div class="card-elevated p-4">
+                    <div class="caption text-muted-2 mb-1">Clasificaciones</div>
+                    <div class="display-sm fw-bold text-blue">{{ count }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

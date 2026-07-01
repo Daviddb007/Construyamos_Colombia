@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Clasificaciones — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">Cola de Clasificaciones</h1>
+                <p class="body-sm text-muted-2">{{ pagination.total }} clasificaciones</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="d-flex gap-2 mb-4">
+            <a href="{{ url_for('admin.clasificaciones') }}" class="chip {{ 'active' if not nivel }}">Todas</a>
+            <a href="{{ url_for('admin.clasificaciones', nivel='bajo') }}" class="chip {{ 'active' if nivel == 'bajo' }}">
+                <span class="badge badge-red me-1">!</span>Baja confianza
+            </a>
+            <a href="{{ url_for('admin.clasificaciones', nivel='medio') }}" class="chip {{ 'active' if nivel == 'medio' }}">
+                <span class="badge badge-yellow me-1">~</span>Media
+            </a>
+            <a href="{{ url_for('admin.clasificaciones', nivel='alto') }}" class="chip {{ 'active' if nivel == 'alto' }}">
+                <span class="badge badge-green me-1">✓</span>Alta
+            </a>
+        </div>
+
+        <div class="card-elevated p-4">
+            <div style="overflow-x: auto;">
+                <table class="table-premium w-100">
+                    <thead>
+                        <tr>
+                            <th>Participación</th>
+                            <th>Pilar</th>
+                            <th>Confianza</th>
+                            <th>Nivel</th>
+                            <th>Modelo</th>
+                            <th>Fecha</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in clasificaciones %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('admin.participacion_detail', id=c.participacion_id) }}" class="text-blue">
+                                    #{{ c.participacion_id }}
+                                </a>
+                            </td>
+                            <td class="caption">{{ c.pilar.nombre if c.pilar else '—' }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress-premium" style="width: 80px; height: 6px;">
+                                        <div class="bar" style="width: {{ (c.confianza * 100)|round }}%;"></div>
+                                    </div>
+                                    <span class="caption fw-bold">{{ (c.confianza * 100)|round }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                {% if c.confianza >= 0.80 %}
+                                <span class="badge badge-green">Alta</span>
+                                {% elif c.confianza >= 0.50 %}
+                                <span class="badge badge-yellow">Media</span>
+                                {% else %}
+                                <span class="badge badge-red">Baja</span>
+                                {% endif %}
+                            </td>
+                            <td class="caption font-monospace">{{ c.modelo_usado }}</td>
+                            <td class="caption">{{ c.created_at.strftime('%Y-%m-%d %H:%M') if c.created_at else '—' }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.participacion_detail', id=c.participacion_id) }}" class="btn btn-outline btn-sm">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted-2 py-4">Sin clasificaciones</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if pagination.pages > 1 %}
+            <div class="d-flex justify-content-center mt-4">
+                <nav>
+                    <ul class="pagination">
+                        {% if pagination.has_prev %}
+                        <li class="page-item"><a class="page-link" href="?page={{ pagination.prev_num }}&nivel={{ nivel }}">Anterior</a></li>
+                        {% endif %}
+                        {% for p_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if p_num %}
+                            <li class="page-item {{ 'active' if p_num == pagination.page }}"><a class="page-link" href="?page={{ p_num }}&nivel={{ nivel }}">{{ p_num }}</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ pagination.next_num }}&nivel={{ nivel }}">Siguiente</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

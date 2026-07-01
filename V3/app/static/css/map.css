@@ -1,0 +1,93 @@
+/* Colombia SVG Map — Interactive heatmap */
+.colombia-map-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.colombia-map-container svg {
+    width: 100%;
+    height: auto;
+}
+
+.dept-path {
+    fill: var(--bg-surface-2);
+    stroke: #fff;
+    stroke-width: 0.8;
+    cursor: pointer;
+    transition: fill 0.2s, stroke 0.2s, transform 0.15s;
+}
+
+.dept-path:hover {
+    stroke: var(--color-2);
+    stroke-width: 1.5;
+    filter: brightness(0.92);
+}
+
+.dept-path.active {
+    stroke: var(--color-2);
+    stroke-width: 2;
+}
+
+/* Heatmap scale — 5 levels */
+.dept-fill-0 { fill: #e2e8f0; }
+.dept-fill-1 { fill: #93c5fd; }
+.dept-fill-2 { fill: #3b82f6; }
+.dept-fill-3 { fill: #1d4ed8; }
+.dept-fill-4 { fill: #1e3a5f; }
+
+.dept-path:hover.dept-fill-0 { fill: #cbd5e1; }
+.dept-path:hover.dept-fill-1 { fill: #60a5fa; }
+.dept-path:hover.dept-fill-2 { fill: #2563eb; }
+.dept-path:hover.dept-fill-3 { fill: #1e40af; }
+.dept-path:hover.dept-fill-4 { fill: #172554; }
+
+/* Tooltip */
+.map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(15, 23, 42, 0.95);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.map-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.map-tooltip .dept-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.map-tooltip .dept-count {
+    color: #93c5fd;
+}
+
+/* Legend */
+.map-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: var(--text-4);
+}
+
+.map-legend .swatch {
+    width: 16px;
+    height: 12px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.08);
+}

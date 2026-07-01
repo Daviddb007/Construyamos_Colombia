@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Planes — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">Planes Estratégicos</h1>
+                <p class="body-sm text-muted-2">{{ planes|length }} planes registrados</p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            {% for plan in planes %}
+            <div class="col-lg-6">
+                <div class="card-elevated p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge {{ 'badge-green' if plan.activo else 'badge-red' }}">
+                            {{ 'Activo' if plan.activo else 'Inactivo' }}
+                        </span>
+                        <span class="caption text-muted-2">v{{ plan.version }}</span>
+                    </div>
+                    <h3 class="heading-sm text-dark mb-2">{{ plan.nombre }}</h3>
+                    <div class="caption text-muted-2 mb-3">
+                        {{ plan.ambito|capitalize }} · {{ plan.vigencia_inicio.strftime('%Y') }}–{{ plan.vigencia_fin.strftime('%Y') if plan.vigencia_fin else '...' }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('admin.plan_detail', id=plan.id) }}" class="btn btn-outline btn-sm flex-grow-1">
+                            <i class="bi bi-eye me-1"></i>Ver pilares
+                        </a>
+                        <form method="POST" action="{{ url_for('admin.plan_toggle', id=plan.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-outline btn-sm {{ 'text-danger' if plan.activo else 'text-success' }}">
+                                <i class="bi bi-{{ 'pause' if plan.activo else 'play' }}"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

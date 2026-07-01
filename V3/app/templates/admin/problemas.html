@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Problemas — Centro de Inteligencia{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">Catálogo de Problemas</h1>
+                <p class="body-sm text-muted-2">{{ problemas|length }} problemas registrados</p>
+            </div>
+        </div>
+
+        <div class="card-elevated p-4">
+            <div style="overflow-x: auto;">
+                <table class="table-premium w-100">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Icono</th>
+                            <th>Estado</th>
+                            <th>Participaciones</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in problemas %}
+                        <tr>
+                            <td class="caption text-muted-2">{{ p.orden }}</td>
+                            <td class="fw-bold">{{ p.nombre }}</td>
+                            <td><i class="bi bi-{{ p.icono }}"></i></td>
+                            <td>
+                                <span class="badge {{ 'badge-green' if p.activo else 'badge-red' }}">
+                                    {{ 'Activo' if p.activo else 'Inactivo' }}
+                                </span>
+                            </td>
+                            <td class="caption">{{ p.participaciones|length }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin.problema_toggle', id=p.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline btn-sm {{ 'text-danger' if p.activo else 'text-success' }}">
+                                        <i class="bi bi-{{ 'pause' if p.activo else 'play' }}"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

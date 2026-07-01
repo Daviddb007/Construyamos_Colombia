@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Participar — Construyamos Colombia{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero" style="padding: var(--space-3xl) 0;">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <div class="badge badge-primary mb-3">Participación Ciudadana</div>
+                <h1 class="display-lg text-white mb-3">Tu voz construye el futuro</h1>
+                <p class="body-lg text-white-50" style="max-width: 540px; margin: 0 auto;">
+                    5 pasos, menos de 5 minutos. Una conversación guiada que transforma tu opinión en evidencia para Colombia.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Formulario -->
+<section class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Step Indicators -->
+                <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                    <div class="step-indicator active">1</div>
+                    <div class="step-line"></div>
+                    <div class="step-indicator">2</div>
+                    <div class="step-line"></div>
+                    <div class="step-indicator">3</div>
+                    <div class="step-line"></div>
+                    <div class="step-indicator">4</div>
+                    <div class="step-line"></div>
+                    <div class="step-indicator">5</div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-premium mb-4">
+                    <div class="bar" id="progressBar" style="width: 20%;"></div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="d-flex justify-content-between" style="font-size: 0.8125rem; color: var(--text-4);">
+                            <span id="stepLabel">Paso 1 de 5 · Ubicación</span>
+                            <span id="stepCount">1/5</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card-body">
+                        <!-- Step 1: Ubicación -->
+                        <div id="step1" class="form-step">
+                            <div class="heading-lg mb-1">¿Dónde vives?</div>
+                            <p class="text-muted-2 body-sm mb-4">Tu ubicación ayuda a mostrar qué le importa a cada región de Colombia.</p>
+
+                            <div class="form-field">
+                                <label class="form-label">Departamento</label>
+                                <select class="form-select" id="departamento">
+                                    <option value="">Selecciona tu departamento</option>
+                                    <option>Amazonas</option><option>Antioquia</option><option>Arauca</option><option>Atlántico</option>
+                                    <option>Bogotá D.C.</option><option>Bolívar</option><option>Boyacá</option><option>Caldas</option>
+                                    <option>Caquetá</option><option>Casanare</option><option>Cauca</option><option>Cesar</option>
+                                    <option>Chocó</option><option>Córdoba</option><option>Cundinamarca</option><option>Guainía</option>
+                                    <option>Guaviare</option><option>Huila</option><option>La Guajira</option><option>Magdalena</option>
+                                    <option>Meta</option><option>Nariño</option><option>Norte de Santander</option><option>Putumayo</option>
+                                    <option>Quindío</option><option>Risaralda</option><option>San Andrés y Providencia</option>
+                                    <option>Santander</option><option>Sucre</option><option>Tolima</option><option>Valle del Cauca</option>
+                                    <option>Vaupés</option><option>Vichada</option>
+                                </select>
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label">Municipio</label>
+                                <input type="text" class="form-control" id="municipio" placeholder="Nombre de tu municipio">
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label">Zona</label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="chip flex-grow-1 justify-content-center zona-btn" data-val="urbana">Urbana</button>
+                                    <button type="button" class="chip flex-grow-1 justify-content-center zona-btn" data-val="rural">Rural</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Problema -->
+                        <div id="step2" class="form-step" style="display: none;">
+                            <div class="heading-lg mb-1">¿Cuál es el principal desafío?</div>
+                            <p class="text-muted-2 body-sm mb-4">Elige el que más te afecta hoy.</p>
+                            <div id="problemaGrid" class="row g-2"></div>
+                        </div>
+
+                        <!-- Step 3: Justificación -->
+                        <div id="step3" class="form-step" style="display: none;">
+                            <div class="heading-lg mb-1">¿Por qué es prioritario?</div>
+                            <p class="text-muted-2 body-sm mb-4">Cuéntanos con tus palabras.</p>
+                            <textarea class="form-control" id="justificacion" maxlength="500" rows="5" placeholder="En mi barrio la inseguridad ha aumentado porque..."></textarea>
+                            <div class="text-end caption mt-1"><span id="justCount">0</span>/500</div>
+                        </div>
+
+                        <!-- Step 4: Propuesta -->
+                        <div id="step4" class="form-step" style="display: none;">
+                            <div class="heading-lg mb-1">¿Qué solución propones?</div>
+                            <p class="text-muted-2 body-sm mb-4">Puede ser una idea concreta o una dirección general.</p>
+                            <textarea class="form-control" id="propuesta" maxlength="500" rows="5" placeholder="Más pie de fuerza y cámaras en los parques del barrio..."></textarea>
+                            <div class="text-end caption mt-1"><span id="propCount">0</span>/500</div>
+                        </div>
+
+                        <!-- Step 5: Gobernanza -->
+                        <div id="step5" class="form-step" style="display: none;">
+                            <div class="heading-lg mb-1">¿Quién debería liderarlo?</div>
+                            <p class="text-muted-2 body-sm mb-3">Elige una opción en cada grupo.</p>
+
+                            <label class="form-label">Debería liderarlo</label>
+                            <div id="responsableGrid" class="d-flex flex-wrap gap-2 mb-4"></div>
+
+                            <label class="form-label">Beneficia principalmente a</label>
+                            <div id="beneficiarioGrid" class="d-flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <!-- Step 6: Resultado SRIE -->
+                        <div id="step6" class="form-step" style="display: none;">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--success-light); display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-check-lg" style="font-size: 1.5rem; color: var(--success);"></i>
+                                </div>
+                                <div>
+                                    <div class="heading-lg">Tu propuesta quedó registrada</div>
+                                    <div class="body-sm text-muted-2">Esto es lo que encontró el motor de clasificación</div>
+                                </div>
+                            </div>
+                            <div class="bg-surface-2 rounded-xl p-4">
+                                <div class="caption mb-1">Se relaciona principalmente con</div>
+                                <div class="heading-lg mb-3" id="resultadoPilar">—</div>
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div class="progress-premium flex-grow-1">
+                                        <div class="bar" id="resultadoBar" style="width: 0%;"></div>
+                                    </div>
+                                    <span class="fw-bold text-blue" id="resultadoConfianza">0%</span>
+                                </div>
+                                <div class="caption" id="resultadoNota"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-card-footer">
+                        <button type="button" class="btn btn-secondary" id="btnBack" style="visibility: hidden;">
+                            <i class="bi bi-arrow-left me-2"></i>Atrás
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btnNext">
+                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var problemas = [
+        {id:1, nombre:"Conseguir empleo", icono:"briefcase", pilar:"El Milagro Minero-Energético", confianza:0.78, nota:"Coincidencia parcial: no hay un pilar exclusivo de empleo, se vincula por generación de industria."},
+        {id:2, nombre:"Seguridad", icono:"shield", pilar:"El Milagro de la Seguridad", confianza:0.95, nota:null},
+        {id:3, nombre:"Educación", icono:"school", pilar:"El Milagro de la Educación", confianza:0.93, nota:null},
+        {id:4, nombre:"Salud", icono:"heart", pilar:"El Milagro de Recuperar la Salud", confianza:0.96, nota:null},
+        {id:5, nombre:"Corrupción", icono:"scale", pilar:"El Milagro de Erradicar la Corrupción", confianza:0.94, nota:null},
+        {id:6, nombre:"Campo y agro", icono:"plant-2", pilar:"El Milagro del Campo y el Agro", confianza:0.97, nota:null},
+        {id:7, nombre:"Medioambiente", icono:"leaf", pilar:"El Milagro de Proteger el Medioambiente", confianza:0.92, nota:null},
+        {id:8, nombre:"Otro", icono:"dots", pilar:"Sin clasificar automáticamente", confianza:0, nota:"Un moderador revisará esta propuesta manualmente."}
+    ];
+    var responsables = [
+        {v:"gobierno_nacional", l:"Gobierno nacional"}, {v:"gobernacion", l:"Gobernación"},
+        {v:"alcaldia", l:"Alcaldía"}, {v:"empresa_privada", l:"Empresa privada"},
+        {v:"academia", l:"Academia"}, {v:"comunidad", l:"Comunidad"}
+    ];
+    var beneficiarios = [
+        {v:"ninos", l:"Niños"}, {v:"jovenes", l:"Jóvenes"}, {v:"campesinos", l:"Campesinos"},
+        {v:"empresarios", l:"Empresarios"}, {v:"adultos_mayores", l:"Adultos mayores"}, {v:"todos", l:"Todos"}
+    ];
+
+    var state = {step:1, zona:null, problema:null, responsable:null, beneficiario:null};
+
+    // Build problem grid
+    var grid = document.getElementById("problemaGrid");
+    problemas.forEach(function(p) {
+        var col = document.createElement("div");
+        col.className = "col-md-6 col-lg-4";
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "selection-card w-100";
+        btn.innerHTML = '<div class="icon"><i class="bi bi-' + p.icono + '"></i></div><span>' + p.nombre + '</span>';
+        btn.onclick = function() {
+            state.problema = p;
+            grid.querySelectorAll('.selection-card').forEach(function(c) { c.classList.remove('active'); });
+            btn.classList.add('active');
+        };
+        col.appendChild(btn);
+        grid.appendChild(col);
+    });
+
+    // Build chip groups
+    function chipGroup(container, items, key) {
+        items.forEach(function(item) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "chip";
+            b.textContent = item.l;
+            b.onclick = function() {
+                state[key] = item.v;
+                container.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+                b.classList.add('active');
+            };
+            container.appendChild(b);
+        });
+    }
+    chipGroup(document.getElementById("responsableGrid"), responsables, "responsable");
+    chipGroup(document.getElementById("beneficiarioGrid"), beneficiarios, "beneficiario");
+
+    // Zone buttons
+    document.querySelectorAll(".zona-btn").forEach(function(btn) {
+        btn.onclick = function() {
+            state.zona = btn.getAttribute("data-val");
+            document.querySelectorAll(".zona-btn").forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+        };
+    });
+
+    // Char counters
+    var justArea = document.getElementById("justificacion");
+    justArea.addEventListener("input", function() { document.getElementById("justCount").textContent = justArea.value.length; });
+    var propArea = document.getElementById("propuesta");
+    propArea.addEventListener("input", function() { document.getElementById("propCount").textContent = propArea.value.length; });
+
+    // Step navigation
+    var labels = ["", "Paso 1 de 5 · Ubicación", "Paso 2 de 5 · Problema", "Paso 3 de 5 · Justificación", "Paso 4 de 5 · Propuesta", "Paso 5 de 5 · Gobernanza", "Resultado"];
+
+    function showStep(n) {
+        document.querySelectorAll(".form-step").forEach(function(s) { s.style.display = "none"; });
+        document.getElementById("step" + n).style.display = "block";
+
+        var pct = Math.min(n, 5) / 5 * 100;
+        document.getElementById("progressBar").style.width = pct + "%";
+        document.getElementById("stepLabel").textContent = labels[n];
+        document.getElementById("stepCount").textContent = n <= 5 ? n + "/5" : "";
+
+        document.getElementById("btnBack").style.visibility = n === 1 ? "hidden" : "visible";
+
+        var indicators = document.querySelectorAll(".step-indicator");
+        indicators.forEach(function(el, i) {
+            el.classList.remove("active", "completed");
+            if (i + 1 < n) el.classList.add("completed");
+            else if (i + 1 === n) el.classList.add("active");
+        });
+
+        var lines = document.querySelectorAll(".step-line");
+        lines.forEach(function(el, i) {
+            el.classList.remove("active", "completed");
+            if (i + 1 < n) el.classList.add("completed");
+        });
+
+        var nextBtn = document.getElementById("btnNext");
+        if (n === 5) {
+            nextBtn.innerHTML = 'Enviar participación <i class="bi bi-send ms-2"></i>';
+        } else if (n === 6) {
+            nextBtn.style.display = "none";
+            document.getElementById("btnBack").style.display = "none";
+        } else {
+            nextBtn.innerHTML = 'Siguiente <i class="bi bi-arrow-right ms-2"></i>';
+            nextBtn.style.display = "inline-block";
+            document.getElementById("btnBack").style.display = "inline-block";
+        }
+    }
+
+    document.getElementById("btnBack").onclick = function() {
+        if (state.step > 1) { state.step--; showStep(state.step); }
+    };
+
+    document.getElementById("btnNext").onclick = function() {
+        if (state.step === 5) {
+            // Show SRIE result
+            var p = state.problema || problemas[1];
+            document.getElementById("resultadoPilar").textContent = p.pilar;
+            var pct = Math.round(p.confianza * 100);
+            document.getElementById("resultadoConfianza").textContent = pct + "%";
+            document.getElementById("resultadoBar").style.width = pct + "%";
+            document.getElementById("resultadoNota").textContent = p.nota || "";
+            state.step = 6;
+            showStep(6);
+            if (typeof launchConfetti === 'function') launchConfetti();
+            return;
+        }
+        if (state.step < 6) { state.step++; showStep(state.step); }
+    };
+
+    showStep(1);
+})();
+</script>
+{% endblock %}
