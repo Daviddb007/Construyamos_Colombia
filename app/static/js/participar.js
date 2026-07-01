@@ -21,7 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initSectorCards() {
     document.querySelectorAll('.sector-card').forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+
             const checkbox = this.querySelector('input[type="checkbox"]');
             const id = parseInt(checkbox.value);
 
@@ -29,7 +31,6 @@ function initSectorCards() {
                 checkbox.checked = false;
                 this.classList.remove('selected');
                 sectoresSeleccionados = sectoresSeleccionados.filter(s => s !== id);
-                updateSectorCounter();
             } else {
                 if (sectoresSeleccionados.length >= 3) {
                     showToast('Máximo 3 sectores permitidos', 'Límite alcanzado', 'error');
@@ -38,8 +39,8 @@ function initSectorCards() {
                 checkbox.checked = true;
                 this.classList.add('selected');
                 sectoresSeleccionados.push(id);
-                updateSectorCounter();
             }
+            updateSectorCounter();
         });
     });
 }
