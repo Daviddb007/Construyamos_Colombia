@@ -31,7 +31,7 @@ admin_bp = Blueprint("admin", __name__)
 # Auth
 # ------------------------------------------------------------------
 @admin_bp.route("/login", methods=["GET", "POST"])
-@limiter.limit("10 per minute;50 per hour")
+@limiter.limit("20 per minute;200 per hour")
 def login():
     if session.get("admin"):
         return redirect(url_for("admin.dashboard"))

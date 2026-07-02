@@ -82,11 +82,18 @@ def register_error_handlers(app: Flask) -> None:
     def handle_method_not_allowed(error):
         return jsonify({"error": "Método no permitido"}), 405
 
+    @app.errorhandler(429)
+    def handle_rate_limit(error):
+        return jsonify({"error": "Demasiadas solicitudes. Intenta de nuevo en un minuto."}), 429
+
     @app.errorhandler(500)
     def handle_internal_error(error):
         return jsonify({"error": "Error interno del servidor"}), 500
 
     @app.errorhandler(Exception)
     def handle_unexpected_error(error):
+        from flask_limiter.errors import RateLimitExceeded
+        if isinstance(error, RateLimitExceeded):
+            return jsonify({"error": "Demasiadas solicitudes. Intenta de nuevo en un minuto."}), 429
         app.logger.exception("Error inesperado: %s", error)
         return jsonify({"error": "Ocurrió un error inesperado"}), 500

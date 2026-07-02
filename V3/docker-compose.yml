@@ -8,10 +8,10 @@ services:
     restart: always
     environment:
       - FLASK_CONFIG=production
-      - SECRET_KEY=${SECRET_KEY}
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-      - ADMIN_USER=${ADMIN_USER}
-      - ADMIN_PASS=${ADMIN_PASS}
+      - SECRET_KEY=${SECRET_KEY:-construyamos_v3_secret_key_2026}
+      - DATABASE_URL=postgresql://${DB_USER:-v3user}:${DB_PASSWORD:-v3securepass}@db:5432/${DB_NAME:-construyamos_v3}
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASS=${ADMIN_PASS:-admin}
       - RATELIMIT_STORAGE_URI=redis://redis:6379/0
       - CACHE_TYPE=RedisCache
       - CACHE_REDIS_URL=redis://redis:6379/1

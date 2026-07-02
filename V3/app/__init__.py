@@ -98,6 +98,10 @@ def _register_blueprints(app: Flask) -> None:
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(health_bp)
 
+    # Exempt admin and health blueprints from default rate limiting
+    limiter.exempt(admin_bp)
+    limiter.exempt(health_bp)
+
 
 def _register_error_handlers(app: Flask) -> None:
     """Registra handlers de errores personalizados."""
