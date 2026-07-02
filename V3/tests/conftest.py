@@ -9,6 +9,10 @@ def app():
     app = create_app("testing")
     with app.app_context():
         _db.create_all()
+        from app.seed.seed_plan import seed_plan, seed_sectores, seed_actores_beneficiarios
+        seed_plan()
+        seed_sectores()
+        seed_actores_beneficiarios()
         yield app
         _db.drop_all()
 

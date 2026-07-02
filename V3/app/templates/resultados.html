@@ -81,6 +81,22 @@
             </div>
         </div>
 
+        <!-- Actores y Beneficiarios -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Actores más mencionados</h3>
+                    <canvas id="chartActores" height="200"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Beneficiarios más mencionados</h3>
+                    <canvas id="chartBeneficiarios" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
         <!-- Table -->
         <div class="card-elevated p-4">
             <h3 class="heading-sm text-dark mb-3">Participaciones recientes</h3>
@@ -90,7 +106,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Departamento</th>
-                            <th>Problema</th>
+                            <th>Problemas</th>
                             <th>Pilar</th>
                             <th>Propuesta</th>
                             <th>Fecha</th>
@@ -114,7 +130,6 @@
 (function() {
     var stats = {{ stats|tojson }};
 
-    // Counters
     function animateCount(el, target) {
         var current = 0;
         var step = Math.max(1, Math.floor(target / 40));
@@ -129,22 +144,14 @@
     animateCount(document.getElementById('statPilares'), stats.pilares);
     animateCount(document.getElementById('statProblemas'), stats.problemas);
 
-    // Colors
     var colors = ['#3B82F6','#10B981','#8B5CF6','#F59E0B','#EF4444','#06B6D4','#EC4899','#14B8A6'];
-
     var API = '/v3/api';
 
-    // Fetch data
     fetch(API + '/estadisticas').then(function(r){ return r.json(); }).then(function(data) {
-        // Map data
         if (data.departamentos && data.departamentos.length) {
             var mapData = {};
             data.departamentos.forEach(function(d) { mapData[d.nombre] = d.total; });
             window.__mapData = mapData;
-        }
-
-        // Departamentos bar
-        if (data.departamentos && data.departamentos.length) {
             new Chart(document.getElementById('chartDepartamentos'), {
                 type: 'bar',
                 data: {
@@ -157,7 +164,6 @@
             });
         }
 
-        // Problemas doughnut
         if (data.problemas && data.problemas.length) {
             new Chart(document.getElementById('chartProblemas'), {
                 type: 'doughnut',
@@ -170,7 +176,6 @@
             });
         }
 
-        // Pilares horizontal bar
         if (data.pilares && data.pilares.length) {
             new Chart(document.getElementById('chartPilares'), {
                 type: 'bar',
@@ -183,9 +188,34 @@
                     scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
         }
+
+        if (data.actores && data.actores.length) {
+            new Chart(document.getElementById('chartActores'), {
+                type: 'bar',
+                data: {
+                    labels: data.actores.map(function(a){ return a.nombre; }),
+                    datasets: [{ label: 'Menciones', data: data.actores.map(function(a){ return a.total; }),
+                        backgroundColor: colors[1], borderRadius: 6 }]
+                },
+                options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+        }
+
+        if (data.beneficiarios && data.beneficiarios.length) {
+            new Chart(document.getElementById('chartBeneficiarios'), {
+                type: 'bar',
+                data: {
+                    labels: data.beneficiarios.map(function(b){ return b.nombre; }),
+                    datasets: [{ label: 'Menciones', data: data.beneficiarios.map(function(b){ return b.total; }),
+                        backgroundColor: colors[3], borderRadius: 6 }]
+                },
+                options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+        }
     });
 
-    // Participaciones
     fetch(API + '/participaciones').then(function(r){ return r.json(); }).then(function(data) {
         var tbody = document.getElementById('tablaParticipaciones');
         if (!data.participaciones || !data.participaciones.length) {
@@ -193,10 +223,11 @@
             return;
         }
         tbody.innerHTML = data.participaciones.map(function(p) {
+            var probs = (p.problemas || []).join(', ') || '—';
             return '<tr>' +
                 '<td><span class="badge badge-blue">' + p.id + '</span></td>' +
                 '<td class="caption">' + (p.departamento || '—') + '</td>' +
-                '<td class="caption">' + (p.problema || '—') + '</td>' +
+                '<td class="caption">' + probs + '</td>' +
                 '<td class="caption">' + (p.pilar || '—') + '</td>' +
                 '<td class="caption">' + (p.propuesta || '—').substring(0,80) + '</td>' +
                 '<td class="caption">' + (p.created_at ? new Date(p.created_at).toLocaleDateString('es-CO') : '—') + '</td>' +

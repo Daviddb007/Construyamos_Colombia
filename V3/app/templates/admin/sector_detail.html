@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ sector.nombre }} — Centro de Inteligencia{% endblock %}
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl); background: var(--bg-1);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">{{ sector.nombre }}</h1>
+                <p class="body-sm text-muted-2">{{ subsectores|length }} subsectores</p>
+            </div>
+            <a href="{{ url_for('admin.sectores') }}" class="btn btn-outline"><i class="bi bi-arrow-left me-2"></i>Volver</a>
+        </div>
+    </div>
+</section>
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        {% for sub in subsectores %}
+        <div class="card-elevated p-4 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="heading-sm text-dark">{{ sub.nombre }}</h3>
+                <span class="badge badge-blue">{{ sub.problemas|selectattr('activo')|list|length }} problemas</span>
+            </div>
+            <div class="d-flex flex-wrap gap-1">
+                {% for p in sub.problemas if p.activo %}
+                <span class="chip">{{ p.nombre }}</span>
+                {% else %}
+                <span class="caption text-muted-2">Sin problemas</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="card-elevated p-4 text-center text-muted-2">Sin subsectores</div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

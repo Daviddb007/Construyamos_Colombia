@@ -1,11 +1,10 @@
 """
 Modelos de participación ciudadana y clasificación SRIE.
 
-Participacion: registro completo de una participación.
-ProblemaReal: catálogo de problemas cotidianos (8 del prototipo).
-ClasificacionSRIE: resultado del motor de clasificación.
+Participacion: registro completo de una participación (sin FKs a problemas/actores/beneficiarios).
+ClasificacionSRIE: resultado del motor de clasificación (top-3 + ranking + keywords_evidencia).
 
-Optimización: índices compuestos para queries frecuentes del admin y dashboard.
+Las relaciones M:N están en catalog.py (participacion_problemas, participacion_actores, participacion_beneficiarios).
 """
 from __future__ import annotations
 
@@ -14,55 +13,15 @@ from datetime import datetime
 from app import db
 
 
-# Tabla asociativa Participacion ↔ Pilar (para búsquedas rápidas)
-participacion_pilares = db.Table(
-    "participacion_pilares",
-    db.Column("participacion_id", db.Integer, db.ForeignKey("participaciones.id"), primary_key=True),
-    db.Column("pilar_id", db.Integer, db.ForeignKey("pilares.id"), primary_key=True),
-    db.Index("idx_part_pilar_participacion", "participacion_id"),
-    db.Index("idx_part_pilar_pilar", "pilar_id"),
-)
-
-
-class ProblemaReal(db.Model):
-    """Catálogo de problemas cotidianos (lenguaje ciudadano)."""
-
-    __tablename__ = "problemas_reales"
-    __table_args__ = (
-        db.Index("idx_problema_activo_orden", "activo", "orden"),
-    )
-
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100), nullable=False, unique=True)
-    icono = db.Column(db.String(50), nullable=False)
-    orden = db.Column(db.Integer, nullable=False, default=0)
-    activo = db.Column(db.Boolean, default=True, nullable=False)
-
-    participaciones = db.relationship(
-        "Participacion", backref="problema_real", lazy="select"
-    )
-
-    def __repr__(self) -> str:
-        return f"<ProblemaReal {self.nombre}>"
-
-    def to_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "nombre": self.nombre,
-            "icono": self.icono,
-            "orden": self.orden,
-        }
-
-
 class Participacion(db.Model):
     """Participación ciudadana completa."""
 
     __tablename__ = "participaciones"
     __table_args__ = (
         db.Index("idx_part_dept_fecha", "departamento", "created_at"),
-        db.Index("idx_part_problema_fecha", "problema_real_id", "created_at"),
         db.Index("idx_part_fecha_desc", "created_at"),
         db.Index("idx_part_municipio", "municipio"),
+        db.Index("idx_part_zona", "zona"),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -72,22 +31,13 @@ class Participacion(db.Model):
     municipio = db.Column(db.String(100), nullable=False)
     zona = db.Column(db.String(20), nullable=False)  # urbana | rural
 
-    # Problema
-    problema_real_id = db.Column(
-        db.Integer, db.ForeignKey("problemas_reales.id"), nullable=False, index=True
-    )
-
     # Texto libre
     justificacion = db.Column(db.Text, nullable=False)
     propuesta = db.Column(db.Text, nullable=False)
 
-    # Gobernanza
-    responsable = db.Column(
-        db.String(50), nullable=False
-    )  # gobierno_nacional | gobernacion | alcaldia | empresa_privada | academia | comunidad
-    beneficiario = db.Column(
-        db.String(50), nullable=False
-    )  # ninos | jovenes | campesinos | empresarios | adultos_mayores | todos
+    # Contexto demográfico
+    rango_edad = db.Column(db.String(10), nullable=True)  # 16-18, 19-25, etc.
+    genero = db.Column(db.String(20), nullable=True)  # Masculino | Femenino | Otro | Prefiero no decir
 
     # Seguridad y auditoría
     ip_hash = db.Column(db.String(64), nullable=True)
@@ -95,20 +45,16 @@ class Participacion(db.Model):
         db.DateTime, default=datetime.utcnow, nullable=False, index=True
     )
 
-    # Relaciones
+    # Relaciones M:N (definidas en catalog.py)
+    # Se importan después de definir Participacion para evitar circular imports
+    # Acceso via: participacion.problemas, participacion.actores, participacion.beneficiarios
+
+    # Clasificaciones SRIE (top-3)
     clasificaciones = db.relationship(
         "ClasificacionSRIE",
         backref="participacion",
-        order_by="ClasificacionSRIE.confianza.desc()",
+        order_by="ClasificacionSRIE.ranking",
         cascade="all, delete-orphan",
-        lazy="select",
-    )
-
-    # Pilares asociados (M:N para búsquedas rápidas)
-    pilares = db.relationship(
-        "Pilar",
-        secondary=participacion_pilares,
-        backref="participaciones",
         lazy="select",
     )
 
@@ -116,16 +62,36 @@ class Participacion(db.Model):
         return f"<Participacion {self.id} - {self.departamento}>"
 
     def to_dict(self) -> dict:
+        from app.models.catalog import participacion_problemas, participacion_actores, participacion_beneficiarios
+        from app.models.catalog import ProblemaCatalogo, Actor, Beneficiario
+
+        problemas = ProblemaCatalogo.query.join(
+            participacion_problemas,
+            participacion_problemas.c.problema_id == ProblemaCatalogo.id,
+        ).filter(participacion_problemas.c.participacion_id == self.id).all()
+
+        actores = Actor.query.join(
+            participacion_actores,
+            participacion_actores.c.actor_id == Actor.id,
+        ).filter(participacion_actores.c.participacion_id == self.id).all()
+
+        beneficiarios = Beneficiario.query.join(
+            participacion_beneficiarios,
+            participacion_beneficiarios.c.beneficiario_id == Beneficiario.id,
+        ).filter(participacion_beneficiarios.c.participacion_id == self.id).all()
+
         return {
             "id": self.id,
             "departamento": self.departamento,
             "municipio": self.municipio,
             "zona": self.zona,
-            "problema_real": self.problema_real.to_dict() if self.problema_real else None,
             "justificacion": self.justificacion,
             "propuesta": self.propuesta,
-            "responsable": self.responsable,
-            "beneficiario": self.beneficiario,
+            "rango_edad": self.rango_edad,
+            "genero": self.genero,
+            "problemas": [p.to_dict() for p in problemas],
+            "actores": [a.to_dict() for a in actores],
+            "beneficiarios": [b.to_dict() for b in beneficiarios],
             "clasificaciones": [c.to_dict() for c in self.clasificaciones],
             "created_at": self.created_at.isoformat(),
         }
@@ -139,25 +105,32 @@ class Participacion(db.Model):
         return {
             "id": self.id,
             "departamento": self.departamento,
-            "problema": self.problema_real.nombre if self.problema_real else None,
+            "problemas": [p.nombre for p in self._get_problemas()],
             "propuesta": self.propuesta[:200] + "..." if len(self.propuesta) > 200 else self.propuesta,
             "pilar": self.clasificaciones[0].pilar.nombre if self.clasificaciones else None,
             "confianza": self.clasificaciones[0].confianza if self.clasificaciones else None,
             "created_at": self.created_at.isoformat(),
         }
 
+    def _get_problemas(self):
+        from app.models.catalog import participacion_problemas, ProblemaCatalogo
+        return ProblemaCatalogo.query.join(
+            participacion_problemas,
+            participacion_problemas.c.problema_id == ProblemaCatalogo.id,
+        ).filter(participacion_problemas.c.participacion_id == self.id).all()
+
 
 class ClasificacionSRIE(db.Model):
     """Resultado del motor de clasificación SRIE para una participación.
 
-    Una misma participación puede tener varias filas (top-N clasificaciones)
-    ordenadas por confianza descendente.
+    Top-3 clasificaciones con ranking, keywords que dispararon el match, y confianza.
     """
 
     __tablename__ = "clasificaciones_srie"
     __table_args__ = (
         db.Index("idx_clasif_pilar_confianza", "pilar_id", "confianza"),
         db.Index("idx_clasif_confianza", "confianza"),
+        db.Index("idx_clasif_ranking", "participacion_id", "ranking"),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -175,6 +148,8 @@ class ClasificacionSRIE(db.Model):
         db.Integer, db.ForeignKey("objetivos.id"), nullable=True
     )
     confianza = db.Column(db.Float, nullable=False)  # 0.0 - 1.0
+    ranking = db.Column(db.Integer, nullable=False, default=1)  # 1 = principal, 2, 3
+    keywords_evidencia = db.Column(db.Text, nullable=True)  # JSON array of matched keywords
     modelo_usado = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -185,9 +160,16 @@ class ClasificacionSRIE(db.Model):
     objetivo = db.relationship("Objetivo", lazy="joined")
 
     def __repr__(self) -> str:
-        return f"<ClasificacionSRIE pilar={self.pilar_id} confianza={self.confianza}>"
+        return f"<ClasificacionSRIE pilar={self.pilar_id} confianza={self.confianza} ranking={self.ranking}>"
 
     def to_dict(self) -> dict:
+        import json
+        keywords = []
+        if self.keywords_evidencia:
+            try:
+                keywords = json.loads(self.keywords_evidencia)
+            except (json.JSONDecodeError, TypeError):
+                keywords = []
         return {
             "id": self.id,
             "pilar": self.pilar.to_dict() if self.pilar else None,
@@ -195,6 +177,8 @@ class ClasificacionSRIE(db.Model):
             "componente": self.componente.to_dict() if self.componente else None,
             "objetivo": self.objetivo.to_dict() if self.objetivo else None,
             "confianza": round(self.confianza, 2),
+            "ranking": self.ranking,
+            "keywords_evidencia": keywords,
             "modelo_usado": self.modelo_usado,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

@@ -1,11 +1,12 @@
-"""Tests de integración para endpoints API y rutas públicas."""
+"""Tests de integración para endpoints API y rutas públicas v2."""
 import json
 
 import pytest
 
 from app import db
-from app.models.participacion import Participacion, ProblemaReal, ClasificacionSRIE
+from app.models.participacion import Participacion, ClasificacionSRIE
 from app.models.plan import Plan, Pilar
+from app.models.catalog import ProblemaCatalogo, Actor, Beneficiario
 
 
 class TestHealthCheck:
@@ -65,20 +66,42 @@ class TestResultados:
         assert "Resultados" in response.data.decode() or "resultados" in response.data.decode()
 
 
-class TestApiProblemas:
+class TestApiCatalogoSectores:
 
-    def test_api_problemas_returns_200(self, client):
-        response = client.get("/api/problemas")
+    def test_api_sectores_returns_200(self, client):
+        response = client.get("/api/catalogo/sectores")
         assert response.status_code == 200
 
-    def test_api_problemas_returns_json(self, client):
-        response = client.get("/api/problemas")
+    def test_api_sectores_returns_json(self, client):
+        response = client.get("/api/catalogo/sectores")
         assert response.content_type == "application/json"
 
-    def test_api_problemas_returns_list(self, client):
-        response = client.get("/api/problemas")
+    def test_api_sectores_returns_list(self, client):
+        response = client.get("/api/catalogo/sectores")
         data = json.loads(response.data)
         assert isinstance(data, list)
+
+
+class TestApiCatalogoActores:
+
+    def test_api_actores_returns_200(self, client):
+        response = client.get("/api/catalogo/actores")
+        assert response.status_code == 200
+
+    def test_api_actores_returns_json(self, client):
+        response = client.get("/api/catalogo/actores")
+        assert response.content_type == "application/json"
+
+
+class TestApiCatalogoBeneficiarios:
+
+    def test_api_beneficiarios_returns_200(self, client):
+        response = client.get("/api/catalogo/beneficiarios")
+        assert response.status_code == 200
+
+    def test_api_beneficiarios_returns_json(self, client):
+        response = client.get("/api/catalogo/beneficiarios")
+        assert response.content_type == "application/json"
 
 
 class TestApiEstadisticas:
@@ -96,6 +119,8 @@ class TestApiEstadisticas:
         data = json.loads(response.data)
         assert "total" in data
         assert "departamentos" in data
+        assert "actores" in data
+        assert "beneficiarios" in data
 
 
 class TestApiParticipaciones:
@@ -123,11 +148,11 @@ class TestApiEnviar:
         data = {
             "municipio": "Bogotá",
             "zona": "urbana",
-            "problema_real_id": 1,
+            "problema_ids": [1],
             "justificacion": "Test justificación",
             "propuesta": "Test propuesta",
-            "responsable": "alcaldia",
-            "beneficiario": "todos",
+            "actor_ids": [1],
+            "beneficiario_ids": [1],
         }
         response = client.post("/api/enviar", json=data)
         assert response.status_code == 400
@@ -137,11 +162,11 @@ class TestApiEnviar:
             "departamento": "Bogotá D.C.",
             "municipio": "",
             "zona": "urbana",
-            "problema_real_id": 1,
+            "problema_ids": [1],
             "justificacion": "Test justificación",
             "propuesta": "Test propuesta",
-            "responsable": "alcaldia",
-            "beneficiario": "todos",
+            "actor_ids": [1],
+            "beneficiario_ids": [1],
         }
         response = client.post("/api/enviar", json=data)
         assert response.status_code == 400
@@ -151,11 +176,11 @@ class TestApiEnviar:
             "departamento": "Bogotá D.C.",
             "municipio": "Bogotá",
             "zona": "costera",
-            "problema_real_id": 1,
+            "problema_ids": [1],
             "justificacion": "Test justificación",
             "propuesta": "Test propuesta",
-            "responsable": "alcaldia",
-            "beneficiario": "todos",
+            "actor_ids": [1],
+            "beneficiario_ids": [1],
         }
         response = client.post("/api/enviar", json=data)
         assert response.status_code == 400
@@ -165,25 +190,25 @@ class TestApiEnviar:
             "departamento": "Bogotá D.C.",
             "municipio": "Bogotá",
             "zona": "urbana",
-            "problema_real_id": 1,
+            "problema_ids": [1],
             "justificacion": "",
             "propuesta": "Test propuesta",
-            "responsable": "alcaldia",
-            "beneficiario": "todos",
+            "actor_ids": [1],
+            "beneficiario_ids": [1],
         }
         response = client.post("/api/enviar", json=data)
         assert response.status_code == 400
 
-    def test_api_enviar_validates_gobernanza(self, client):
+    def test_api_enviar_validates_problemas(self, client):
         data = {
             "departamento": "Bogotá D.C.",
             "municipio": "Bogotá",
             "zona": "urbana",
-            "problema_real_id": 1,
+            "problema_ids": [],
             "justificacion": "Test justificación",
             "propuesta": "Test propuesta",
-            "responsable": "gobierno_inexistente",
-            "beneficiario": "todos",
+            "actor_ids": [1],
+            "beneficiario_ids": [1],
         }
         response = client.post("/api/enviar", json=data)
         assert response.status_code == 400
@@ -197,7 +222,7 @@ class TestAdmin:
 
     def test_admin_dashboard_requires_login(self, client):
         response = client.get("/admin/")
-        assert response.status_code == 302  # Redirect to login
+        assert response.status_code == 302
 
     def test_admin_dashboard_with_session(self, logged_in_client):
         response = logged_in_client.get("/admin/")
@@ -209,6 +234,14 @@ class TestAdmin:
 
     def test_admin_participaciones_with_session(self, logged_in_client):
         response = logged_in_client.get("/admin/participaciones")
+        assert response.status_code == 200
+
+    def test_admin_sectores_requires_login(self, client):
+        response = client.get("/admin/sectores")
+        assert response.status_code == 302
+
+    def test_admin_sectores_with_session(self, logged_in_client):
+        response = logged_in_client.get("/admin/sectores")
         assert response.status_code == 200
 
     def test_admin_pilares_requires_login(self, client):
@@ -225,6 +258,22 @@ class TestAdmin:
 
     def test_admin_problemas_with_session(self, logged_in_client):
         response = logged_in_client.get("/admin/problemas")
+        assert response.status_code == 200
+
+    def test_admin_actores_requires_login(self, client):
+        response = client.get("/admin/actores")
+        assert response.status_code == 302
+
+    def test_admin_actores_with_session(self, logged_in_client):
+        response = logged_in_client.get("/admin/actores")
+        assert response.status_code == 200
+
+    def test_admin_beneficiarios_requires_login(self, client):
+        response = client.get("/admin/beneficiarios")
+        assert response.status_code == 302
+
+    def test_admin_beneficiarios_with_session(self, logged_in_client):
+        response = logged_in_client.get("/admin/beneficiarios")
         assert response.status_code == 200
 
     def test_admin_clasificaciones_requires_login(self, client):

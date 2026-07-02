@@ -20,9 +20,7 @@
                             <th>Departamento</th>
                             <th>Municipio</th>
                             <th>Zona</th>
-                            <th>Problema</th>
-                            <th>Responsable</th>
-                            <th>Beneficiario</th>
+                            <th>Pilar</th>
                             <th>IP</th>
                         </tr>
                     </thead>
@@ -38,14 +36,12 @@
                             <td class="caption">{{ p.departamento }}</td>
                             <td class="caption">{{ p.municipio }}</td>
                             <td class="caption">{{ p.zona }}</td>
-                            <td class="caption">{{ p.problema_real.nombre if p.problema_real else '—' }}</td>
-                            <td class="caption">{{ p.responsable|replace('_', ' ')|title }}</td>
-                            <td class="caption">{{ p.beneficiario|replace('_', ' ')|title }}</td>
+                            <td class="caption">{{ p.clasificaciones[0].pilar.nombre if p.clasificaciones else '—' }}</td>
                             <td class="caption font-monospace text-muted-2">{{ p.ip_hash[:12] if p.ip_hash else '—' }}...</td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="9" class="text-center text-muted-2 py-4">Sin registros</td>
+                            <td colspan="7" class="text-center text-muted-2 py-4">Sin registros</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -1,6 +1,7 @@
-"""Validación y sanitización de inputs para participaciones.
+"""
+Validación y sanitización de inputs para participaciones v2.
 
-Valida todos los campos requeridos antes de persistir.
+Valida los nuevos campos: problemas (M:N, 1-3), actores, beneficiarios.
 Sanitiza textos libres para prevenir XSS.
 """
 from __future__ import annotations
@@ -8,8 +9,8 @@ from __future__ import annotations
 import bleach
 
 from app.errors import ValidationError
+from app.models.catalog import ProblemaCatalogo, Actor, Beneficiario
 
-# Allowed HTML tags for text fields (none — strip everything)
 ALLOWED_TAGS: list[str] = []
 ALLOWED_ATTRIBUTES: dict = {}
 
@@ -34,16 +35,6 @@ VALID_GENEROS: list[str] = [
 
 VALID_ZONAS: list[str] = ["urbana", "rural"]
 
-VALID_RESPONSABLES: list[str] = [
-    "gobierno_nacional", "gobernacion", "alcaldia",
-    "empresa_privada", "academia", "comunidad",
-]
-
-VALID_BENEFICIARIOS: list[str] = [
-    "ninos", "jovenes", "campesinos", "empresarios",
-    "adultos_mayores", "todos",
-]
-
 
 def sanitize_text(text: str) -> str:
     """Sanitiza texto libre eliminando HTML y scripts."""
@@ -51,22 +42,23 @@ def sanitize_text(text: str) -> str:
 
 
 def validate_participacion(data: dict) -> dict:
-    """Valida y sanitiza datos de participación. Retorna datos sanitizados."""
+    """Valida y sanitiza datos de participación v2. Retorna datos sanitizados."""
     _validate_ubicacion(data)
-    _validate_problema(data)
+    _validate_problemas(data)
     _validate_textos(data)
     _validate_gobernanza(data)
 
-    # Sanitize text fields
     return {
         "departamento": data["departamento"],
         "municipio": sanitize_text(data["municipio"]),
         "zona": data["zona"],
-        "problema_real_id": data["problema_real_id"],
+        "problema_ids": data["problema_ids"],
         "justificacion": sanitize_text(data["justificacion"]),
         "propuesta": sanitize_text(data["propuesta"]),
-        "responsable": data["responsable"],
-        "beneficiario": data["beneficiario"],
+        "rango_edad": data.get("rango_edad"),
+        "genero": data.get("genero"),
+        "actor_ids": data.get("actor_ids", []),
+        "beneficiario_ids": data.get("beneficiario_ids", []),
     }
 
 
@@ -90,10 +82,26 @@ def _validate_ubicacion(data: dict) -> None:
         raise ValidationError("Zona inválida (debe ser 'urbana' o 'rural')")
 
 
-def _validate_problema(data: dict) -> None:
-    problema_real_id = data.get("problema_real_id")
-    if not problema_real_id:
-        raise ValidationError("Debe seleccionar un problema")
+def _validate_problemas(data: dict) -> None:
+    """Valida que se seleccionen 1-3 problemas del catálogo."""
+    problema_ids = data.get("problema_ids")
+    if not problema_ids or not isinstance(problema_ids, list):
+        raise ValidationError("Debe seleccionar al menos un problema")
+
+    if len(problema_ids) < 1:
+        raise ValidationError("Debe seleccionar al menos un problema")
+
+    if len(problema_ids) > 3:
+        raise ValidationError("Puede seleccionar máximo 3 problemas")
+
+    # Verificar que los IDs existan y estén activos
+    ids = [int(pid) for pid in problema_ids]
+    count = ProblemaCatalogo.query.filter(
+        ProblemaCatalogo.id.in_(ids),
+        ProblemaCatalogo.activo == True,
+    ).count()
+    if count != len(ids):
+        raise ValidationError("Uno o más problemas seleccionados no son válidos")
 
 
 def _validate_textos(data: dict) -> None:
@@ -111,14 +119,31 @@ def _validate_textos(data: dict) -> None:
 
 
 def _validate_gobernanza(data: dict) -> None:
-    responsable = data.get("responsable", "")
-    if not responsable:
-        raise ValidationError("Debe seleccionar quién debería liderar")
-    if responsable not in VALID_RESPONSABLES:
-        raise ValidationError("Responsable inválido")
+    """Valida actores (1-3) y beneficiarios (1-5)."""
+    actor_ids = data.get("actor_ids", [])
+    if not actor_ids or not isinstance(actor_ids, list):
+        raise ValidationError("Debe seleccionar al menos un actor")
 
-    beneficiario = data.get("beneficiario", "")
-    if not beneficiario:
-        raise ValidationError("Debe seleccionar a quién beneficia")
-    if beneficiario not in VALID_BENEFICIARIOS:
-        raise ValidationError("Beneficiario inválido")
+    if len(actor_ids) > 3:
+        raise ValidationError("Puede seleccionar máximo 3 actores")
+
+    if actor_ids:
+        ids = [int(aid) for aid in actor_ids]
+        count = Actor.query.filter(Actor.id.in_(ids), Actor.activo == True).count()
+        if count != len(ids):
+            raise ValidationError("Uno o más actores seleccionados no son válidos")
+
+    beneficiario_ids = data.get("beneficiario_ids", [])
+    if not beneficiario_ids or not isinstance(beneficiario_ids, list):
+        raise ValidationError("Debe seleccionar al menos un beneficiario")
+
+    if len(beneficiario_ids) > 5:
+        raise ValidationError("Puede seleccionar máximo 5 beneficiarios")
+
+    if beneficiario_ids:
+        ids = [int(bid) for bid in beneficiario_ids]
+        count = Beneficiario.query.filter(
+            Beneficiario.id.in_(ids), Beneficiario.activo == True
+        ).count()
+        if count != len(ids):
+            raise ValidationError("Uno o más beneficiarios seleccionados no son válidos")

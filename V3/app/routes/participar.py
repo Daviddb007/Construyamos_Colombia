@@ -1,6 +1,6 @@
-"""Blueprint de participación ciudadana.
+"""Blueprint de participación ciudadana v2.
 
-Formulario conversacional 5 pasos + POST /api/enviar + SRIE classification.
+Formulario 5 pasos + POST /api/enviar + SRIE classification (top-3).
 """
 from __future__ import annotations
 
@@ -11,7 +11,11 @@ from flask_limiter.util import get_remote_address
 from app import db, limiter
 from app.decorators import get_client_ip, hash_ip
 from app.errors import ValidationError, DatabaseError
-from app.models.participacion import Participacion, ProblemaReal, ClasificacionSRIE
+from app.models.participacion import Participacion
+from app.models.catalog import (
+    ProblemaCatalogo, Actor, Beneficiario,
+    participacion_problemas, participacion_actores, participacion_beneficiarios,
+)
 from app.services.validation import validate_participacion
 from app.services.srie.classifier import clasificar_participacion
 
@@ -23,10 +27,38 @@ def participar():
     return render_template("participar.html")
 
 
-@participar_bp.route("/api/problemas")
-def api_problemas():
-    problemas = ProblemaReal.query.filter_by(activo=True).order_by(ProblemaReal.orden).all()
-    return jsonify([p.to_dict() for p in problemas])
+@participar_bp.route("/api/catalogo/sectores")
+def api_sectores():
+    """Retorna sectores con subsectores y problemas anidados."""
+    from app.models.catalog import Sector, Subsector
+
+    sectores = Sector.query.filter_by(activo=True).order_by(Sector.orden).all()
+    result = []
+    for s in sectores:
+        sub_data = []
+        for sub in s.subsectores:
+            if not sub.activo:
+                continue
+            probs = [
+                p.to_dict() for p in sub.problemas if p.activo
+            ]
+            sub_data.append({**sub.to_dict(), "problemas": probs})
+        result.append({**s.to_dict(), "subsectores": sub_data})
+    return jsonify(result)
+
+
+@participar_bp.route("/api/catalogo/actores")
+def api_actores():
+    from app.models.catalog import Actor
+    actores = Actor.query.filter_by(activo=True).order_by(Actor.orden).all()
+    return jsonify([a.to_dict() for a in actores])
+
+
+@participar_bp.route("/api/catalogo/beneficiarios")
+def api_beneficiarios():
+    from app.models.catalog import Beneficiario
+    beneficiarios = Beneficiario.query.filter_by(activo=True).order_by(Beneficiario.orden).all()
+    return jsonify([b.to_dict() for b in beneficiarios])
 
 
 @participar_bp.route("/api/enviar", methods=["POST"])
@@ -36,7 +68,7 @@ def api_enviar():
     if not data:
         raise ValidationError("Se esperaba JSON")
 
-    # Validate and sanitize
+    # Validar y sanitizar
     sanitized = validate_participacion(data)
 
     ip = get_client_ip()
@@ -46,34 +78,82 @@ def api_enviar():
         departamento=sanitized["departamento"],
         municipio=sanitized["municipio"],
         zona=sanitized["zona"],
-        problema_real_id=sanitized["problema_real_id"],
         justificacion=sanitized["justificacion"],
         propuesta=sanitized["propuesta"],
-        responsable=sanitized["responsable"],
-        beneficiario=sanitized["beneficiario"],
+        rango_edad=sanitized.get("rango_edad"),
+        genero=sanitized.get("genero"),
         ip_hash=ip_h,
     )
 
     try:
         db.session.add(participacion)
         db.session.flush()
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         raise DatabaseError("Error al guardar la participación")
 
+    # Asociar problemas M:N
     try:
-        clasificacion, explicacion = clasificar_participacion(participacion)
+        for pid in sanitized["problema_ids"]:
+            db.session.execute(
+                participacion_problemas.insert().values(
+                    participacion_id=participacion.id, problema_id=int(pid)
+                )
+            )
+    except Exception:
+        db.session.rollback()
+        raise DatabaseError("Error al asociar problemas")
+
+    # Asociar actores M:N
+    try:
+        for aid in sanitized.get("actor_ids", []):
+            db.session.execute(
+                participacion_actores.insert().values(
+                    participacion_id=participacion.id, actor_id=int(aid)
+                )
+            )
+    except Exception:
+        db.session.rollback()
+        raise DatabaseError("Error al asociar actores")
+
+    # Asociar beneficiarios M:N
+    try:
+        for bid in sanitized.get("beneficiario_ids", []):
+            db.session.execute(
+                participacion_beneficiarios.insert().values(
+                    participacion_id=participacion.id, beneficiario_id=int(bid)
+                )
+            )
+    except Exception:
+        db.session.rollback()
+        raise DatabaseError("Error al asociar beneficiarios")
+
+    # Clasificar SRIE (top-3)
+    try:
+        clasificaciones, explicaciones = clasificar_participacion(participacion)
         db.session.commit()
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         raise DatabaseError("Error al clasificar la participación")
 
+    # Retornar top-3
+    top_clasif = clasificaciones[0] if clasificaciones else None
     return jsonify({
         "success": True,
         "id": participacion.id,
+        "clasificaciones": [
+            {
+                "pilar": c.pilar.to_dict() if c.pilar else None,
+                "confianza": c.confianza,
+                "ranking": c.ranking,
+                "keywords": c.keywords_evidencia,
+                "explicacion": e,
+            }
+            for c, e in zip(clasificaciones, explicaciones)
+        ],
         "clasificacion": {
-            "pilar": clasificacion.pilar.to_dict() if clasificacion.pilar else None,
-            "confianza": clasificacion.confianza,
-            "explicacion": explicacion,
+            "pilar": top_clasif.pilar.to_dict() if top_clasif and top_clasif.pilar else None,
+            "confianza": top_clasif.confianza if top_clasif else 0,
+            "explicacion": explicaciones[0] if explicaciones else "",
         },
     }), 201

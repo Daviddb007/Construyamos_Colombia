@@ -1,116 +1,136 @@
-"""Tests unitarios para el motor SRIE."""
+"""Tests unitarios para el motor SRIE v2."""
 import pytest
 
-from app.services.srie.matcher import buscar_pilar_por_problema
+from app.services.srie.matcher import clasificar_texto, get_pilar_by_slug
 from app.services.srie.confidence import calcular_confianza
 from app.services.srie.explanation import generar_explicacion
 
 
 class TestMatcher:
 
-    def test_seguridad_maps_to_seguridad(self, app):
+    def test_seguridad_matches_seguridad_pilar(self, app):
         with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
+            results = clasificar_texto("La inseguridad en mi barrio es terrible, nos roban constantly")
+            assert len(results) > 0
+            pilar_slugs = [r["pilar_slug"] for r in results]
+            assert "seguridad" in pilar_slugs
+
+    def test_educacion_matches_educacion_pilar(self, app):
+        with app.app_context():
+            results = clasificar_texto("La educación en Colombia es deficiente, los colegios están deteriorados")
+            pilar_slugs = [r["pilar_slug"] for r in results]
+            assert "educacion" in pilar_slugs
+
+    def test_salud_matches_salud_pilar(self, app):
+        with app.app_context():
+            results = clasificar_texto("El sistema de salud está colapsado, hay listas de espera enormes")
+            pilar_slugs = [r["pilar_slug"] for r in results]
+            assert "recuperar-la-salud" in pilar_slugs
+
+    def test_campo_matches_campo_pilar(self, app):
+        with app.app_context():
+            results = clasificar_texto("Los campesinos no tienen tierra, la agricultura está abandonada")
+            pilar_slugs = [r["pilar_slug"] for r in results]
+            assert "campo-y-el-agro" in pilar_slugs
+
+    def test_corrupcion_matches_corrupcion_pilar(self, app):
+        with app.app_context():
+            results = clasificar_texto("La corrupción es endémica, los contratos públicos son fraudulentos")
+            pilar_slugs = [r["pilar_slug"] for r in results]
+            assert "erradicar-la-corrupcion" in pilar_slugs
+
+    def test_returns_top_3(self, app):
+        with app.app_context():
+            results = clasificar_texto("Seguridad y educación son importantes para la juventud")
+            assert len(results) <= 3
+
+    def test_returns_score_between_0_and_1(self, app):
+        with app.app_context():
+            results = clasificar_texto("Test text")
+            for r in results:
+                assert 0.0 <= r["score"] <= 1.0
+
+    def test_sector_boost(self, app):
+        with app.app_context():
+            results = clasificar_texto("Empleo y trabajo formal", sector_slug="empleo-economia")
+            assert len(results) > 0
+
+    def test_problema_direct_boost(self, app):
+        with app.app_context():
+            results = clasificar_texto("Inseguridad barrial", problema_slug="inseguridad-barrios")
+            assert len(results) > 0
+
+    def test_get_pilar_by_slug(self, app):
+        with app.app_context():
+            pilar = get_pilar_by_slug("seguridad")
             assert pilar is not None
             assert "Seguridad" in pilar.nombre
 
-    def test_educacion_maps_to_educacion(self, app):
+    def test_get_pilar_by_slug_not_found(self, app):
         with app.app_context():
-            pilar = buscar_pilar_por_problema("Educación")
-            assert pilar is not None
-            assert "Educación" in pilar.nombre
-
-    def test_salud_maps_to_salud(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Salud")
-            assert pilar is not None
-            assert "Salud" in pilar.nombre
-
-    def test_corrupcion_maps_to_corrupcion(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Corrupción")
-            assert pilar is not None
-            assert "Corrupción" in pilar.nombre
-
-    def test_campo_maps_to_campo(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Campo y agro")
-            assert pilar is not None
-            assert "Campo" in pilar.nombre or "Agro" in pilar.nombre
-
-    def test_medioambiente_maps_to_medioambiente(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Medioambiente")
-            assert pilar is not None
-            assert "Medioambiente" in pilar.nombre
-
-    def test_empleo_maps_to_minero(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Conseguir empleo")
-            assert pilar is not None
-            assert "Minero" in pilar.nombre or "Energét" in pilar.nombre
-
-    def test_otro_returns_none(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Otro")
-            assert pilar is None
-
-    def test_unknown_returns_none(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("ProblemaInexistente")
+            pilar = get_pilar_by_slug("nonexistent-slug")
             assert pilar is None
 
 
 class TestConfidence:
 
-    def test_seguridad_high_confidence(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
-            conf = calcular_confianza("Seguridad", "Justificación", "Propuesta", pilar)
-            assert conf >= 0.80
+    def test_high_score_high_confidence(self, app):
+        conf = calcular_confianza(
+            score=0.9, justificacion="Texto largo con detalles",
+            propuesta="Propuesta concreta con implementación",
+            keywords_encontradas=["seguridad", "inseguridad", "robo"],
+            tiene_problema_directo=True,
+        )
+        assert conf >= 0.80
 
-    def test_otro_zero_confidence(self, app):
-        with app.app_context():
-            conf = calcular_confianza("Otro", "Justificación", "Propuesta", None)
-            assert conf == 0.0
+    def test_low_score_low_confidence(self, app):
+        conf = calcular_confianza(
+            score=0.1, justificacion="X",
+            propuesta="Y",
+            keywords_encontradas=["uno"],
+            tiene_problema_directo=False,
+        )
+        assert conf < 0.50
 
     def test_long_text_bonus(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
-            short = calcular_confianza("Seguridad", "Corto", "Corto", pilar)
-            long_text = "x" * 150
-            long = calcular_confianza("Seguridad", long_text, long_text, pilar)
-            assert long >= short
+        short = calcular_confianza(0.5, "Corto", "Corto", ["kw"], True)
+        long = calcular_confianza(0.5, "x" * 150, "y" * 150, ["kw"], True)
+        assert long >= short
+
+    def test_problem_direct_bonus(self, app):
+        with_direct = calcular_confianza(0.5, "Test", "Test", ["kw"], True)
+        without_direct = calcular_confianza(0.5, "Test", "Test", ["kw"], False)
+        assert with_direct >= without_direct
 
     def test_confidence_range(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
-            conf = calcular_confianza("Seguridad", "Test", "Test", pilar)
-            assert 0.0 <= conf <= 1.0
+        conf = calcular_confianza(0.5, "Test", "Test", ["kw"], False)
+        assert 0.0 <= conf <= 1.0
+
+    def test_single_keyword_penalty(self, app):
+        with_many = calcular_confianza(0.5, "Test", "Test", ["kw1", "kw2", "kw3"], False)
+        with_one = calcular_confianza(0.5, "Test", "Test", ["kw1"], False)
+        assert with_many >= with_one
 
 
 class TestExplanation:
 
-    def test_high_confidence_explanation(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
-            exp = generar_explicacion("Seguridad", pilar, 0.95)
-            assert "Seguridad" in exp
-            assert "directamente" in exp
+    def test_high_confidence_first_rank(self, app):
+        exp = generar_explicacion("Seguridad", 0.95, ["seguridad", "robo"], 1)
+        assert "Seguridad" in exp
+        assert "directamente" in exp
 
-    def test_medium_confidence_explanation(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
-            exp = generar_explicacion("Seguridad", pilar, 0.65)
-            assert "parcialmente" in exp
+    def test_medium_confidence_first_rank(self, app):
+        exp = generar_explicacion("Seguridad", 0.65, ["seguridad"], 1)
+        assert "parcialmente" in exp
 
-    def test_low_confidence_explanation(self, app):
-        with app.app_context():
-            pilar = buscar_pilar_por_problema("Seguridad")
-            exp = generar_explicacion("Seguridad", pilar, 0.30)
-            assert "provisionalmente" in exp
+    def test_low_confidence_first_rank(self, app):
+        exp = generar_explicacion("Seguridad", 0.30, [], 1)
+        assert "provisionalmente" in exp
 
-    def test_no_pilar_explanation(self, app):
-        with app.app_context():
-            exp = generar_explicacion("Otro", None, 0.0)
-            assert "revisión manual" in exp
+    def test_second_rank_high(self, app):
+        exp = generar_explicacion("Educación", 0.70, ["colegio"], 2)
+        assert "también" in exp
+
+    def test_second_rank_low(self, app):
+        exp = generar_explicacion("Educación", 0.30, [], 2)
+        assert "parcial" in exp

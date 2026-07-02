@@ -1,13 +1,14 @@
-"""Blueprint de resultados públicos.
+"""Blueprint de resultados públicos v2.
 
-Dashboard con estadísticas agregadas y tabla de participaciones recientes.
+Dashboard con estadísticas agregadas, tabla de participaciones recientes, y API.
 """
 from __future__ import annotations
 
 from flask import Blueprint, render_template, request, jsonify
 
 from app import db, cache
-from app.models.participacion import Participacion, ClasificacionSRIE, ProblemaReal
+from app.models.participacion import Participacion, ClasificacionSRIE
+from app.models.catalog import ProblemaCatalogo, participacion_problemas, Actor, Beneficiario, participacion_actores, participacion_beneficiarios
 from app.models.plan import Pilar
 
 resultados_bp = Blueprint("resultados", __name__)
@@ -19,7 +20,7 @@ def resultados():
     total = Participacion.query.count()
     municipios = db.session.query(db.func.count(db.distinct(Participacion.municipio))).scalar() or 0
     pilares = db.session.query(db.func.count(db.distinct(ClasificacionSRIE.pilar_id))).scalar() or 0
-    problemas = db.session.query(db.func.count(db.distinct(ProblemaReal.id))).scalar() or 0
+    problemas = ProblemaCatalogo.query.filter_by(activo=True).count()
 
     stats = {
         "total": total,
@@ -43,16 +44,52 @@ def api_estadisticas():
         .order_by(db.func.count(Participacion.id).desc())
         .all()
     )
-    problemas = (
+
+    # Contar problemas por participaciones M:N
+    problemas_raw = (
         db.session.query(
-            ProblemaReal.nombre,
-            db.func.count(Participacion.id),
+            ProblemaCatalogo.nombre,
+            db.func.count(participacion_problemas.c.participacion_id),
         )
-        .join(ProblemaReal, ProblemaReal.id == Participacion.problema_real_id)
-        .group_by(ProblemaReal.nombre)
-        .order_by(db.func.count(Participacion.id).desc())
+        .join(
+            participacion_problemas,
+            participacion_problemas.c.problema_id == ProblemaCatalogo.id,
+        )
+        .group_by(ProblemaCatalogo.nombre)
+        .order_by(db.func.count(participacion_problemas.c.participacion_id).desc())
         .all()
     )
+
+    # Contar actores
+    actores_raw = (
+        db.session.query(
+            Actor.nombre,
+            db.func.count(participacion_actores.c.participacion_id),
+        )
+        .join(
+            participacion_actores,
+            participacion_actores.c.actor_id == Actor.id,
+        )
+        .group_by(Actor.nombre)
+        .order_by(db.func.count(participacion_actores.c.participacion_id).desc())
+        .all()
+    )
+
+    # Contar beneficiarios
+    beneficiarios_raw = (
+        db.session.query(
+            Beneficiario.nombre,
+            db.func.count(participacion_beneficiarios.c.participacion_id),
+        )
+        .join(
+            participacion_beneficiarios,
+            participacion_beneficiarios.c.beneficiario_id == Beneficiario.id,
+        )
+        .group_by(Beneficiario.nombre)
+        .order_by(db.func.count(participacion_beneficiarios.c.participacion_id).desc())
+        .all()
+    )
+
     pilares = (
         db.session.query(
             Pilar.nombre,
@@ -63,10 +100,13 @@ def api_estadisticas():
         .order_by(db.func.count(ClasificacionSRIE.id).desc())
         .all()
     )
+
     return jsonify({
         "total": total,
         "departamentos": [{"nombre": d, "total": c} for d, c in departamentos],
-        "problemas": [{"nombre": p, "total": c} for p, c in problemas],
+        "problemas": [{"nombre": p, "total": c} for p, c in problemas_raw],
+        "actores": [{"nombre": a, "total": c} for a, c in actores_raw],
+        "beneficiarios": [{"nombre": b, "total": c} for b, c in beneficiarios_raw],
         "pilares": [{"nombre": p, "total": c} for p, c in pilares],
     })
 
@@ -87,4 +127,3 @@ def api_participaciones():
         "pages": pagination.pages,
         "current_page": page,
     })
-

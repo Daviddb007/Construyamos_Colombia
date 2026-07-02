@@ -1,47 +1,48 @@
-"""Cálculo de confianza para clasificaciones SRIE.
+"""
+Cálculo de confianza para clasificaciones SRIE v2.
 
-Niveles:
-    Alto:   0.80 - 1.00  (clasificación automática)
-    Medio:  0.50 - 0.79  (clasificación + revisión sugerida)
-    Bajo:   0.20 - 0.49  (clasificación provisional)
-    Sin clasificar: 0.00 - 0.19 (cola de revisión manual)
+Combina score del matcher con factores contextuales (texto largo, problema seleccionado).
 """
 from __future__ import annotations
 
 
 def calcular_confianza(
-    problema_nombre: str,
+    score: float,
     justificacion: str,
     propuesta: str,
-    pilar,
+    keywords_encontradas: list[str],
+    tiene_problema_directo: bool,
 ) -> float:
-    """Calcula el nivel de confianza de una clasificación.
+    """Calcula la confianza final de una clasificación.
 
-    Estrategia actual (keyword matching):
-    - Si hay pilar directo (problema → pilar): confianza alta (0.85-0.97)
-    - Si es "Otro": confianza 0.0 (requiere revisión manual)
+    Args:
+        score: Score normalizado del matcher (0.0 - 1.0)
+        justificacion: Texto de justificación del ciudadano
+        propuesta: Texto de propuesta del ciudadano
+        keywords_encontradas: Lista de keywords que matchearon
+        tiene_problema_directo: Si el problema seleccionado tiene mapping directo al pilar
 
-    Futuro: se puede agregar NLP (TF-IDF, embeddings) para refinar.
+    Retorna:
+        confianza entre 0.0 y 1.0
     """
-    if pilar is None:
-        return 0.0
+    confianza = score
 
-    # Confianza base por匹配 directa
-    confianza_base = {
-        "Conseguir empleo": 0.78,
-        "Seguridad": 0.95,
-        "Educación": 0.93,
-        "Salud": 0.96,
-        "Corrupción": 0.94,
-        "Campo y agro": 0.97,
-        "Medioambiente": 0.92,
-    }
+    # Bonus por problema directo (problema seleccionado → pilar directo)
+    if tiene_problema_directo:
+        confianza = min(confianza + 0.10, 1.0)
 
-    confianza = confianza_base.get(problema_nombre, 0.85)
-
-    # Bonus por texto sustancial
+    # Bonus por texto sustancial (justificación + propuesta > 100 chars)
     texto_total = f"{justificacion} {propuesta}"
     if len(texto_total) > 200:
-        confianza = min(confianza + 0.02, 1.0)
+        confianza = min(confianza + 0.05, 1.0)
+    elif len(texto_total) > 100:
+        confianza = min(confianza + 0.03, 1.0)
+
+    # Bonus por keywords fuertes (peso >= 0.9)
+    # ya está implícito en el score del matcher
+
+    # Penalización por pocas keywords (solo 1 keyword encontrada)
+    if len(keywords_encontradas) == 1:
+        confianza = max(confianza - 0.05, 0.0)
 
     return round(confianza, 2)

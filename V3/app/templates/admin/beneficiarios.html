@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Beneficiarios — Centro de Inteligencia{% endblock %}
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl); background: var(--bg-1);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">Beneficiarios</h1>
+                <p class="body-sm text-muted-2">A quiénes beneficia la propuesta</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline"><i class="bi bi-arrow-left me-2"></i>Volver</a>
+        </div>
+    </div>
+</section>
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="card-elevated p-4">
+            <div style="overflow-x: auto;">
+                <table class="table-premium w-100">
+                    <thead>
+                        <tr><th>ID</th><th>Nombre</th><th>Orden</th><th>Estado</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for b in beneficiarios %}
+                        <tr>
+                            <td><span class="badge badge-blue">{{ b.id }}</span></td>
+                            <td class="fw-bold">{{ b.nombre }}</td>
+                            <td>{{ b.orden }}</td>
+                            <td>{% if b.activo %}<span class="badge badge-success">Activo</span>{% else %}<span class="badge badge-danger">Inactivo</span>{% endif %}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin.beneficiario_toggle', id=b.id) }}" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline btn-sm"><i class="bi bi-toggle-{{ 'on' if b.activo else 'off' }}"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted-2 py-4">Sin beneficiarios</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

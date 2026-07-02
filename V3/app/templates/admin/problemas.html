@@ -19,9 +19,8 @@
                         <tr>
                             <th>#</th>
                             <th>Nombre</th>
-                            <th>Icono</th>
+                            <th>Subsector</th>
                             <th>Estado</th>
-                            <th>Participaciones</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -30,13 +29,12 @@
                         <tr>
                             <td class="caption text-muted-2">{{ p.orden }}</td>
                             <td class="fw-bold">{{ p.nombre }}</td>
-                            <td><i class="bi bi-{{ p.icono }}"></i></td>
+                            <td class="caption">{{ p.subsector.nombre if p.subsector else '—' }}</td>
                             <td>
                                 <span class="badge {{ 'badge-green' if p.activo else 'badge-red' }}">
                                     {{ 'Activo' if p.activo else 'Inactivo' }}
                                 </span>
                             </td>
-                            <td class="caption">{{ p.participaciones|length }}</td>
                             <td>
                                 <form method="POST" action="{{ url_for('admin.problema_toggle', id=p.id) }}">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

@@ -4,7 +4,8 @@ from __future__ import annotations
 from flask import Blueprint, render_template
 
 from app import db, cache
-from app.models.participacion import Participacion, ProblemaReal
+from app.models.participacion import Participacion
+from app.models.catalog import ProblemaCatalogo
 from app.models.plan import Pilar
 
 home_bp = Blueprint("home", __name__)
@@ -18,7 +19,7 @@ def index():
         db.func.count(db.distinct(Participacion.municipio))
     ).scalar() or 0
     pilares = Pilar.query.filter_by(activo=True).count()
-    problemas = ProblemaReal.query.filter_by(activo=True).count()
+    problemas = ProblemaCatalogo.query.filter_by(activo=True).count()
 
     stats = {
         "total": total,

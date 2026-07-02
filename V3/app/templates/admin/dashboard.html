@@ -27,33 +27,18 @@
 <section class="section" style="padding-top: 0; padding-bottom: var(--space-lg);">
     <div class="container">
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ url_for('admin.dashboard') }}" class="chip active">
-                <i class="bi bi-grid me-1"></i>Dashboard
-            </a>
-            <a href="{{ url_for('admin.participaciones') }}" class="chip">
-                <i class="bi bi-chat-dots me-1"></i>Participaciones
-            </a>
-            <a href="{{ url_for('admin.pilares') }}" class="chip">
-                <i class="bi bi-diagram-3 me-1"></i>Pilares
-            </a>
-            <a href="{{ url_for('admin.problemas') }}" class="chip">
-                <i class="bi bi-exclamation-triangle me-1"></i>Problemas
-            </a>
-            <a href="{{ url_for('admin.clasificaciones') }}" class="chip">
-                <i class="bi bi-tags me-1"></i>Clasificaciones
-            </a>
-            <a href="{{ url_for('admin.planes') }}" class="chip">
-                <i class="bi bi-journal-richtext me-1"></i>Planes
-            </a>
-            <a href="{{ url_for('admin.export_page') }}" class="chip">
-                <i class="bi bi-download me-1"></i>Exportar
-            </a>
-            <a href="{{ url_for('admin.config_page') }}" class="chip">
-                <i class="bi bi-gear me-1"></i>Config
-            </a>
-            <a href="{{ url_for('admin.logs') }}" class="chip">
-                <i class="bi bi-clock-history me-1"></i>Logs
-            </a>
+            <a href="{{ url_for('admin.dashboard') }}" class="chip active"><i class="bi bi-grid me-1"></i>Dashboard</a>
+            <a href="{{ url_for('admin.participaciones') }}" class="chip"><i class="bi bi-chat-dots me-1"></i>Participaciones</a>
+            <a href="{{ url_for('admin.sectores') }}" class="chip"><i class="bi bi-diagram-3 me-1"></i>Sectores</a>
+            <a href="{{ url_for('admin.pilares') }}" class="chip"><i class="bi bi-diagram-3 me-1"></i>Pilares</a>
+            <a href="{{ url_for('admin.problemas') }}" class="chip"><i class="bi bi-exclamation-triangle me-1"></i>Problemas</a>
+            <a href="{{ url_for('admin.actores') }}" class="chip"><i class="bi bi-people me-1"></i>Actores</a>
+            <a href="{{ url_for('admin.beneficiarios') }}" class="chip"><i class="bi bi-person-heart me-1"></i>Beneficiarios</a>
+            <a href="{{ url_for('admin.clasificaciones') }}" class="chip"><i class="bi bi-tags me-1"></i>Clasificaciones</a>
+            <a href="{{ url_for('admin.planes') }}" class="chip"><i class="bi bi-journal-richtext me-1"></i>Planes</a>
+            <a href="{{ url_for('admin.export_page') }}" class="chip"><i class="bi bi-download me-1"></i>Exportar</a>
+            <a href="{{ url_for('admin.config_page') }}" class="chip"><i class="bi bi-gear me-1"></i>Config</a>
+            <a href="{{ url_for('admin.logs') }}" class="chip"><i class="bi bi-clock-history me-1"></i>Logs</a>
         </div>
     </div>
 </section>
@@ -90,6 +75,36 @@
             </div>
         </div>
 
+        <!-- Top Problemas + Top Actores -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Top Problemas</h3>
+                    {% for item in stats.top_problemas %}
+                    <div class="d-flex justify-content-between align-items-center py-1 {% if not loop.last %}border-bottom{% endif %}">
+                        <span class="body-sm">{{ item.nombre }}</span>
+                        <span class="badge badge-blue">{{ item.total }}</span>
+                    </div>
+                    {% else %}
+                    <p class="caption text-muted-2">Sin datos aún</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-elevated p-4">
+                    <h3 class="heading-sm text-dark mb-3">Top Actores</h3>
+                    {% for item in stats.top_actores %}
+                    <div class="d-flex justify-content-between align-items-center py-1 {% if not loop.last %}border-bottom{% endif %}">
+                        <span class="body-sm">{{ item.nombre }}</span>
+                        <span class="badge badge-blue">{{ item.total }}</span>
+                    </div>
+                    {% else %}
+                    <p class="caption text-muted-2">Sin datos aún</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <!-- Table -->
         <div class="card-elevated p-4">
             <h3 class="heading-sm text-dark mb-3">Últimas participaciones</h3>
@@ -100,7 +115,6 @@
                             <th>ID</th>
                             <th>Departamento</th>
                             <th>Municipio</th>
-                            <th>Problema</th>
                             <th>Pilar</th>
                             <th>Confianza</th>
                             <th>Fecha</th>
@@ -113,7 +127,6 @@
                             <td><span class="badge badge-blue">{{ p.id }}</span></td>
                             <td class="caption">{{ p.departamento }}</td>
                             <td class="caption">{{ p.municipio }}</td>
-                            <td class="caption">{{ p.problema_real.nombre if p.problema_real else '—' }}</td>
                             <td class="caption">{{ p.clasificaciones[0].pilar.nombre if p.clasificaciones else '—' }}</td>
                             <td>
                                 {% if p.clasificaciones %}
@@ -136,7 +149,7 @@
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="8" class="text-center text-muted-2 py-4">Sin participaciones aún</td>
+                            <td colspan="7" class="text-center text-muted-2 py-4">Sin participaciones aún</td>
                         </tr>
                         {% endfor %}
                     </tbody>

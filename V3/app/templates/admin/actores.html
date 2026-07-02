@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Actores — Centro de Inteligencia{% endblock %}
+{% block content %}
+<section class="section" style="padding: var(--space-2xl) 0 var(--space-xl); background: var(--bg-1);">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="heading-xl text-dark mb-1">Actores</h1>
+                <p class="body-sm text-muted-2">Quiénes deberían liderar la solución</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline"><i class="bi bi-arrow-left me-2"></i>Volver</a>
+        </div>
+    </div>
+</section>
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="card-elevated p-4">
+            <div style="overflow-x: auto;">
+                <table class="table-premium w-100">
+                    <thead>
+                        <tr><th>ID</th><th>Nombre</th><th>Orden</th><th>Estado</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for a in actores %}
+                        <tr>
+                            <td><span class="badge badge-blue">{{ a.id }}</span></td>
+                            <td class="fw-bold">{{ a.nombre }}</td>
+                            <td>{{ a.orden }}</td>
+                            <td>{% if a.activo %}<span class="badge badge-success">Activo</span>{% else %}<span class="badge badge-danger">Inactivo</span>{% endif %}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin.actor_toggle', id=a.id) }}" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline btn-sm"><i class="bi bi-toggle-{{ 'on' if a.activo else 'off' }}"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted-2 py-4">Sin actores</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

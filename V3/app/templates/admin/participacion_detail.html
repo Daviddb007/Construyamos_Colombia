@@ -41,18 +41,30 @@
                             <div class="caption text-muted-2">Zona</div>
                             <div class="fw-bold">{{ p.zona|capitalize }}</div>
                         </div>
+                        {% if p.rango_edad %}
                         <div class="col-sm-4">
-                            <div class="caption text-muted-2">Problema</div>
-                            <div class="fw-bold">{{ p.problema_real.nombre if p.problema_real else '—' }}</div>
+                            <div class="caption text-muted-2">Rango de edad</div>
+                            <div class="fw-bold">{{ p.rango_edad }}</div>
                         </div>
+                        {% endif %}
+                        {% if p.genero %}
                         <div class="col-sm-4">
-                            <div class="caption text-muted-2">Responsable</div>
-                            <div class="fw-bold">{{ p.responsable|replace('_', ' ')|title }}</div>
+                            <div class="caption text-muted-2">Género</div>
+                            <div class="fw-bold">{{ p.genero }}</div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="caption text-muted-2">Beneficiario</div>
-                            <div class="fw-bold">{{ p.beneficiario|replace('_', ' ')|title }}</div>
-                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Problemas seleccionados -->
+                <div class="card-elevated p-4 mb-4">
+                    <h3 class="heading-sm text-dark mb-2">Problemas seleccionados</h3>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for prob in problemas %}
+                        <span class="chip active">{{ prob.nombre }}</span>
+                        {% else %}
+                        <span class="caption text-muted-2">Sin problemas</span>
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -69,16 +81,18 @@
 
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <!-- Clasificación SRIE -->
+                <!-- Clasificaciones SRIE (top-3) -->
                 {% for c in p.clasificaciones %}
                 <div class="card-elevated p-4 mb-4">
-                    <div class="caption text-muted-2 mb-2">Clasificación SRIE</div>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="caption text-muted-2">Clasificación SRIE #{{ c.ranking }}</div>
+                        <span class="badge badge-{{ 'success' if c.confianza >= 0.8 else 'warning' if c.confianza >= 0.5 else 'danger' }}">
+                            {{ (c.confianza * 100)|round }}%
+                        </span>
+                    </div>
                     <div class="heading-md text-dark mb-2">{{ c.pilar.nombre if c.pilar else 'Sin clasificar' }}</div>
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="progress-premium flex-grow-1">
-                            <div class="bar" style="width: {{ (c.confianza * 100)|round }}%;"></div>
-                        </div>
-                        <span class="fw-bold text-blue">{{ (c.confianza * 100)|round }}%</span>
+                    <div class="progress-premium mb-3">
+                        <div class="bar" style="width: {{ (c.confianza * 100)|round }}%;"></div>
                     </div>
                     {% if c.linea %}
                     <div class="caption text-muted-2 mb-1">Línea estratégica</div>
@@ -95,6 +109,30 @@
                     <div class="caption text-muted-2 mt-2">Modelo: {{ c.modelo_usado }}</div>
                 </div>
                 {% endfor %}
+
+                <!-- Actores -->
+                <div class="card-elevated p-4 mb-4">
+                    <div class="caption text-muted-2 mb-2">Actores seleccionados</div>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for a in actores %}
+                        <span class="chip">{{ a.nombre }}</span>
+                        {% else %}
+                        <span class="caption text-muted-2">Sin actores</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Beneficiarios -->
+                <div class="card-elevated p-4 mb-4">
+                    <div class="caption text-muted-2 mb-2">Beneficiarios</div>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for b in beneficiarios %}
+                        <span class="chip">{{ b.nombre }}</span>
+                        {% else %}
+                        <span class="caption text-muted-2">Sin beneficiarios</span>
+                        {% endfor %}
+                    </div>
+                </div>
 
                 <!-- Metadata -->
                 <div class="card-elevated p-4">

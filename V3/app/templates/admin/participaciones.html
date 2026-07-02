@@ -41,7 +41,6 @@
                             <th>ID</th>
                             <th>Departamento</th>
                             <th>Municipio</th>
-                            <th>Problema</th>
                             <th>Pilar</th>
                             <th>Confianza</th>
                             <th>Fecha</th>
@@ -54,7 +53,6 @@
                             <td><span class="badge badge-blue">{{ p.id }}</span></td>
                             <td class="caption">{{ p.departamento }}</td>
                             <td class="caption">{{ p.municipio }}</td>
-                            <td class="caption">{{ p.problema_real.nombre if p.problema_real else '—' }}</td>
                             <td class="caption">{{ p.clasificaciones[0].pilar.nombre if p.clasificaciones else '—' }}</td>
                             <td>
                                 {% if p.clasificaciones %}
@@ -77,7 +75,7 @@
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="8" class="text-center text-muted-2 py-4">Sin participaciones</td>
+                            <td colspan="7" class="text-center text-muted-2 py-4">Sin participaciones</td>
                         </tr>
                         {% endfor %}
                     </tbody>

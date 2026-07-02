@@ -1,7 +1,7 @@
-"""Blueprint del panel administrativo (Centro de Inteligencia).
+"""Blueprint del panel administrativo (Centro de Inteligencia) v2.
 
-9 módulos: Dashboard, Participaciones, Pilares, Problemas, Clasificaciones,
-Export, Config, Logs, Planes.
+Módulos: Dashboard, Participaciones, Pilares, Problemas, Clasificaciones,
+Planes, Sectores (CRUD), Actores, Beneficiarios, Export, Config, Logs.
 """
 from __future__ import annotations
 
@@ -17,8 +17,12 @@ from flask import (
 
 from app import db, cache, limiter
 from app.decorators import login_required
-from app.models.participacion import Participacion, ClasificacionSRIE, ProblemaReal
+from app.models.participacion import Participacion, ClasificacionSRIE
 from app.models.plan import Plan, Pilar, LineaEstrategica, Componente, Objetivo
+from app.models.catalog import (
+    Sector, Subsector, ProblemaCatalogo, Actor, Beneficiario,
+    participacion_problemas, participacion_actores, participacion_beneficiarios,
+)
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -72,6 +76,38 @@ def dashboard():
     raw_avg = db.session.query(db.func.avg(ClasificacionSRIE.confianza)).scalar() or 0
     avg_conf = round(float(raw_avg) * 100, 1)
 
+    # Top problemas
+    top_problemas = (
+        db.session.query(
+            ProblemaCatalogo.nombre,
+            db.func.count(participacion_problemas.c.participacion_id).label("total"),
+        )
+        .join(
+            participacion_problemas,
+            participacion_problemas.c.problema_id == ProblemaCatalogo.id,
+        )
+        .group_by(ProblemaCatalogo.nombre)
+        .order_by(db.desc("total"))
+        .limit(5)
+        .all()
+    )
+
+    # Top actores
+    top_actores = (
+        db.session.query(
+            Actor.nombre,
+            db.func.count(participacion_actores.c.participacion_id).label("total"),
+        )
+        .join(
+            participacion_actores,
+            participacion_actores.c.actor_id == Actor.id,
+        )
+        .group_by(Actor.nombre)
+        .order_by(db.desc("total"))
+        .limit(5)
+        .all()
+    )
+
     stats = {
         "total": total,
         "this_month": this_month,
@@ -80,12 +116,13 @@ def dashboard():
         "total_pilares": total_pilares,
         "coverage": round(pilares_cubiertos / total_pilares * 100) if total_pilares > 0 else 0,
         "avg_confidence": avg_conf,
+        "top_problemas": [{"nombre": p, "total": c} for p, c in top_problemas],
+        "top_actores": [{"nombre": a, "total": c} for a, c in top_actores],
     }
 
     participaciones = (
         Participacion.query
         .options(
-            db.joinedload(Participacion.problema_real),
             db.joinedload(Participacion.clasificaciones).joinedload(ClasificacionSRIE.pilar),
         )
         .order_by(Participacion.created_at.desc())
@@ -120,7 +157,6 @@ def participaciones():
     pagination = (
         query
         .options(
-            db.joinedload(Participacion.problema_real),
             db.joinedload(Participacion.clasificaciones).joinedload(ClasificacionSRIE.pilar),
         )
         .order_by(Participacion.created_at.desc())
@@ -142,7 +178,26 @@ def participaciones():
 @login_required
 def participacion_detail(id):
     p = Participacion.query.get_or_404(id)
-    return render_template("admin/participacion_detail.html", p=p)
+    # Eager load M:N relationships
+    problemas = ProblemaCatalogo.query.join(
+        participacion_problemas,
+        participacion_problemas.c.problema_id == ProblemaCatalogo.id,
+    ).filter(participacion_problemas.c.participacion_id == p.id).all()
+
+    actores = Actor.query.join(
+        participacion_actores,
+        participacion_actores.c.actor_id == Actor.id,
+    ).filter(participacion_actores.c.participacion_id == p.id).all()
+
+    beneficiarios = Beneficiario.query.join(
+        participacion_beneficiarios,
+        participacion_beneficiarios.c.beneficiario_id == Beneficiario.id,
+    ).filter(participacion_beneficiarios.c.participacion_id == p.id).all()
+
+    return render_template(
+        "admin/participacion_detail.html",
+        p=p, problemas=problemas, actores=actores, beneficiarios=beneficiarios,
+    )
 
 
 @admin_bp.route("/participaciones/<int:id>/delete", methods=["POST"])
@@ -153,6 +208,74 @@ def participacion_delete(id):
     db.session.commit()
     flash(f"Participación #{id} eliminada", "success")
     return redirect(url_for("admin.participaciones"))
+
+
+# ------------------------------------------------------------------
+# Sectores (CRUD)
+# ------------------------------------------------------------------
+@admin_bp.route("/sectores")
+@login_required
+def sectores():
+    sectores = Sector.query.order_by(Sector.orden).all()
+    return render_template("admin/sectores.html", sectores=sectores)
+
+
+@admin_bp.route("/sectores/<int:id>/toggle", methods=["POST"])
+@login_required
+def sector_toggle(id):
+    s = Sector.query.get_or_404(id)
+    s.activo = not s.activo
+    db.session.commit()
+    flash(f"Sector '{s.nombre}' {'activado' if s.activo else 'desactivado'}", "success")
+    return redirect(url_for("admin.sectores"))
+
+
+@admin_bp.route("/sectores/<int:id>")
+@login_required
+def sector_detail(id):
+    s = Sector.query.get_or_404(id)
+    subsectores = Subsector.query.filter_by(sector_id=id).order_by(Subsector.orden).all()
+    return render_template("admin/sector_detail.html", sector=s, subsectores=subsectores)
+
+
+# ------------------------------------------------------------------
+# Actores
+# ------------------------------------------------------------------
+@admin_bp.route("/actores")
+@login_required
+def actores():
+    actores = Actor.query.order_by(Actor.orden).all()
+    return render_template("admin/actores.html", actores=actores)
+
+
+@admin_bp.route("/actores/<int:id>/toggle", methods=["POST"])
+@login_required
+def actor_toggle(id):
+    a = Actor.query.get_or_404(id)
+    a.activo = not a.activo
+    db.session.commit()
+    flash(f"Actor '{a.nombre}' {'activado' if a.activo else 'desactivado'}", "success")
+    return redirect(url_for("admin.actores"))
+
+
+# ------------------------------------------------------------------
+# Beneficiarios
+# ------------------------------------------------------------------
+@admin_bp.route("/beneficiarios")
+@login_required
+def beneficiarios():
+    beneficiarios = Beneficiario.query.order_by(Beneficiario.orden).all()
+    return render_template("admin/beneficiarios.html", beneficiarios=beneficiarios)
+
+
+@admin_bp.route("/beneficiarios/<int:id>/toggle", methods=["POST"])
+@login_required
+def beneficiario_toggle(id):
+    b = Beneficiario.query.get_or_404(id)
+    b.activo = not b.activo
+    db.session.commit()
+    flash(f"Beneficiario '{b.nombre}' {'activado' if b.activo else 'desactivado'}", "success")
+    return redirect(url_for("admin.beneficiarios"))
 
 
 # ------------------------------------------------------------------
@@ -185,19 +308,19 @@ def pilar_toggle(id):
 
 
 # ------------------------------------------------------------------
-# Problemas
+# Problemas (catálogo)
 # ------------------------------------------------------------------
 @admin_bp.route("/problemas")
 @login_required
 def problemas():
-    problemas = ProblemaReal.query.order_by(ProblemaReal.orden).all()
+    problemas = ProblemaCatalogo.query.order_by(ProblemaCatalogo.orden).all()
     return render_template("admin/problemas.html", problemas=problemas)
 
 
 @admin_bp.route("/problemas/<int:id>/toggle", methods=["POST"])
 @login_required
 def problema_toggle(id):
-    p = ProblemaReal.query.get_or_404(id)
+    p = ProblemaCatalogo.query.get_or_404(id)
     p.activo = not p.activo
     db.session.commit()
     flash(f"Problema '{p.nombre}' {'activado' if p.activo else 'desactivado'}", "success")
@@ -205,7 +328,7 @@ def problema_toggle(id):
 
 
 # ------------------------------------------------------------------
-# Clasificaciones (Cola de revisión)
+# Clasificaciones
 # ------------------------------------------------------------------
 @admin_bp.route("/clasificaciones")
 @login_required
@@ -276,13 +399,24 @@ def export_csv():
     participaciones = Participacion.query.order_by(Participacion.created_at.desc()).all()
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["ID", "Departamento", "Municipio", "Zona", "Problema", "Justificación", "Propuesta", "Responsable", "Beneficiario", "Fecha"])
+    writer.writerow(["ID", "Departamento", "Municipio", "Zona", "Problemas", "Justificación", "Propuesta", "Actores", "Beneficiarios", "Fecha"])
     for p in participaciones:
+        probs = ProblemaCatalogo.query.join(
+            participacion_problemas, participacion_problemas.c.problema_id == ProblemaCatalogo.id,
+        ).filter(participacion_problemas.c.participacion_id == p.id).all()
+        acts = Actor.query.join(
+            participacion_actores, participacion_actores.c.actor_id == Actor.id,
+        ).filter(participacion_actores.c.participacion_id == p.id).all()
+        bes = Beneficiario.query.join(
+            participacion_beneficiarios, participacion_beneficiarios.c.beneficiario_id == Beneficiario.id,
+        ).filter(participacion_beneficiarios.c.participacion_id == p.id).all()
+
         writer.writerow([
             p.id, p.departamento, p.municipio, p.zona,
-            p.problema_real.nombre if p.problema_real else "",
+            ", ".join([pr.nombre for pr in probs]),
             p.justificacion, p.propuesta,
-            p.responsable, p.beneficiario,
+            ", ".join([a.nombre for a in acts]),
+            ", ".join([b.nombre for b in bes]),
             p.created_at.strftime("%Y-%m-%d %H:%M") if p.created_at else "",
         ])
     return Response(
@@ -314,7 +448,11 @@ def config_page():
         "plan_activo": Plan.query.filter_by(activo=True).first(),
         "total_planes": Plan.query.count(),
         "total_pilares": Pilar.query.count(),
-        "total_problemas": ProblemaReal.query.count(),
+        "total_sectores": Sector.query.count(),
+        "total_subsectores": Subsector.query.count(),
+        "total_problemas": ProblemaCatalogo.query.count(),
+        "total_actores": Actor.query.count(),
+        "total_beneficiarios": Beneficiario.query.count(),
         "rate_limit": current_app.config.get("RATELIMIT_DEFAULT", "N/A"),
     }
     return render_template("admin/config.html", config=config_data)

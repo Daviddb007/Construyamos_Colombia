@@ -2,7 +2,7 @@
 
 Uso:
     python run.py              # Servidor de desarrollo
-    flask seed                 # Sembrar datos iniciales
+    flask seed                 # Sembrar datos iniciales (plan + catálogos)
     flask init-db              # Crear tablas sin seed
     flask db migrate           # Generar migración
     flask db upgrade           # Aplicar migración
@@ -17,7 +17,7 @@ app = create_app(os.environ.get("FLASK_CONFIG", "development"))
 
 @app.cli.command("seed")
 def seed_command():
-    """Crea tablas y siembra datos iniciales (plan + problemas)."""
+    """Crea tablas y siembra datos iniciales (plan + sectores + actores + beneficiarios)."""
     with app.app_context():
         db.create_all()
         from app.seed import run_all

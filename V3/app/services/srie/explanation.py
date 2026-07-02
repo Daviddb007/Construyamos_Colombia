@@ -1,41 +1,55 @@
-"""Generación de explicaciones para el ciudadano.
+"""
+Generación de explicaciones v2 para el ciudadano.
 
-Crea textos claros que explican por qué su propuesta fue clasificada
-en un pilar específico.
+Explica por qué su propuesta fue clasificada en los pilares que aparecen.
 """
 from __future__ import annotations
 
 
 def generar_explicacion(
-    problema_nombre: str,
-    pilar,
+    pilar_nombre: str,
     confianza: float,
+    keywords: list[str],
+    ranking: int,
 ) -> str:
     """Genera una explicación legible para el ciudadano.
 
-    Retorna un string en español que explica la clasificación.
+    Args:
+        pilar_nombre: Nombre del pilar
+        confianza: Nivel de confianza (0.0 - 1.0)
+        keywords: Lista de keywords que dispararon el match
+        ranking: Posición en el top (1, 2, 3)
+
+    Retorna string en español.
     """
-    if pilar is None:
-        return (
-            "No fue posible clasificar tu propuesta automáticamente. "
-            "Un moderador la revisará manualmente."
-        )
+    kw_text = ""
+    if keywords:
+        kw_display = ", ".join(keywords[:3])
+        kw_text = f" (coincidencia con: {kw_display})"
 
-    if confianza >= 0.85:
+    if ranking == 1:
+        if confianza >= 0.80:
+            return (
+                f"Tu propuesta se relaciona directamente con el pilar "
+                f"\"{pilar_nombre}\"{kw_text}."
+            )
+        if confianza >= 0.50:
+            return (
+                f"Tu propuesta se relaciona con el pilar "
+                f"\"{pilar_nombre}\"{kw_text}. Un moderador podría ajustar "
+                f"esta clasificación."
+            )
         return (
-            f"Tu propuesta sobre '{problema_nombre}' se relaciona directamente "
-            f"con el pilar \"{pilar.nombre}\"."
+            f"Tu propuesta fue clasificada provisionalmente en el pilar "
+            f"\"{pilar_nombre}\"{kw_text}. La confianza es baja."
         )
-
-    if confianza >= 0.50:
+    else:
+        if confianza >= 0.50:
+            return (
+                f"Tu propuesta también se relaciona con el pilar "
+                f"\"{pilar_nombre}\"{kw_text}."
+            )
         return (
-            f"Tu propuesta sobre '{problema_nombre}' se relaciona parcialmente "
-            f"con el pilar \"{pilar.nombre}\". Un moderador podría ajustar "
-            f"esta clasificación."
+            f"Se detectó una relación parcial con el pilar "
+            f"\"{pilar_nombre}\"{kw_text}."
         )
-
-    return (
-        f"Tu propuesta sobre '{problema_nombre}' fue clasificada provisionalmente "
-        f"en el pilar \"{pilar.nombre}\". La confianza es baja y podría "
-        f"reclasificarse."
-    )
