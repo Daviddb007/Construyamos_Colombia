@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from app import db, limiter
+from app import db, limiter, csrf
 from app.decorators import get_client_ip, hash_ip
 from app.errors import ValidationError, DatabaseError
 from app.models.participacion import Participacion
@@ -62,6 +62,7 @@ def api_beneficiarios():
 
 
 @participar_bp.route("/api/enviar", methods=["POST"])
+@csrf.exempt
 @limiter.limit("5 per minute;20 per hour")
 def api_enviar():
     data = request.get_json(silent=True)
