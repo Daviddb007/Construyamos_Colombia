@@ -14,8 +14,20 @@ resultados_bp = Blueprint("resultados", __name__)
 
 
 @resultados_bp.route("/resultados")
+@cache.cached(timeout=60)
 def resultados():
-    return render_template("resultados.html")
+    total = Participacion.query.count()
+    municipios = db.session.query(db.func.count(db.distinct(Participacion.municipio))).scalar() or 0
+    pilares = db.session.query(db.func.count(db.distinct(ClasificacionSRIE.pilar_id))).scalar() or 0
+    problemas = db.session.query(db.func.count(db.distinct(ProblemaReal.id))).scalar() or 0
+
+    stats = {
+        "total": total,
+        "municipios": municipios,
+        "pilares": pilares,
+        "problemas": problemas,
+    }
+    return render_template("resultados.html", stats=stats)
 
 
 @resultados_bp.route("/api/estadisticas")
