@@ -271,9 +271,9 @@ a:hover {
 }
 
 .btn-nav-outline {
-    background: transparent;
-    color: var(--gold) !important;
-    border: 1.5px solid var(--gold);
+    background: rgba(255, 255, 255, 0.08);
+    color: white !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
     padding: 9px 20px;
     font-weight: 600;
     font-size: 0.9375rem;
@@ -282,10 +282,11 @@ a:hover {
 }
 
 .btn-nav-outline:hover {
-    background: var(--gold);
-    color: var(--navy) !important;
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white !important;
     transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(212, 168, 67, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
 }
 
 /* ======================== BUTTONS ======================== */
@@ -1024,12 +1025,17 @@ textarea.form-control {
 }
 
 .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 1;
+    transform: translateY(0);
     transition: all var(--duration-lg) var(--ease);
 }
 
-.animate-on-scroll.visible {
+.js-ready .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.js-ready .animate-on-scroll.visible {
     opacity: 1;
     transform: translateY(0);
 }
