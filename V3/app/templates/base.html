@@ -64,7 +64,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('resultados.resultados') }}">Resultados</a>
                     </li>
-                    <li class="nav-item ms-lg-4 d-none d-lg-block">
+                    <li class="nav-item ms-lg-3 d-none d-lg-block">
+                        <a class="btn btn-nav-outline btn-sm" href="{{ url_for('admin.login') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-2 d-none d-lg-block">
                         <a class="btn btn-nav-cta" href="{{ url_for('participar.participar') }}">
                             <i class="bi bi-arrow-right-circle me-2"></i>Participar
                         </a>
