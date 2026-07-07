@@ -8,6 +8,7 @@ from app import db, limiter
 from app.decorators import login_required
 from app.forms import LoginForm
 from app.models.participacion import Participacion
+from app.models.politica import Politica
 from app.models.sector import Sector
 from app.services.stats_service import get_estadisticas_completas
 from app.services.export_service import exportar_participaciones_csv
