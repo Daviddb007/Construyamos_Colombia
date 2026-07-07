@@ -3,375 +3,364 @@
 {% block title %}Laboratorio de Inteligencia Pública | Ecosistema de Inteligencia Pública{% endblock %}
 
 {% block content %}
-<section class="hero-section">
-    <div class="particle" style="width: 300px; height: 300px; background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%); top: 10%; left: 5%; animation-delay: 0s;"></div>
-    <div class="particle" style="width: 200px; height: 200px; background: radial-gradient(circle, rgba(241, 196, 15, 0.15) 0%, transparent 70%); bottom: 20%; right: 10%; animation-delay: 5s;"></div>
-    <div class="particle" style="width: 150px; height: 150px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%); top: 40%; right: 30%; animation-delay: 10s;"></div>
-    
+<!-- Hero -->
+<section class="hero">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 hero-content">
-                <div class="hero-badge">
-                    <i class="bi bi-shield-check"></i>
-                    Ecosistema Nacional de Inteligencia Pública
+            <div class="col-lg-7 hero-content">
+                <div class="badge badge-white mb-3">
+                    <i class="bi bi-shield-check me-1"></i> Ecosistema Nacional de Inteligencia Pública
                 </div>
-                
-                <h1 class="hero-title">
-                    Laboratorio de<br>
-                    <span class="highlight">Inteligencia Pública</span>
+                <h1 class="display-xl mb-4">
+                    Laboratorio de<br><span class="text-gradient">Inteligencia Pública</span>
                 </h1>
-                
-                <p class="hero-subtitle">
-                    El primer ecosistema colombiano que conecta la voz de los ciudadanos con el conocimiento, 
+                <p class="body-lg text-white-50 mb-4" style="max-width: 540px;">
+                    El primer ecosistema colombiano que conecta la voz de los ciudadanos con el conocimiento,
                     la evidencia y la toma de decisiones públicas, impulsado por inteligencia artificial.
                 </p>
-                
-                <div class="hero-cta-group">
-                    <a href="{{ url_for('participar.participar') }}" class="btn btn-hero-primary">
-                        <i class="bi bi-arrow-right-circle"></i>
-                        Participar ahora
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ url_for('participar.participar') }}" class="btn btn-gold btn-lg">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Participar ahora
                     </a>
-                    <a href="{{ url_for('iniciativa.iniciativa') }}" class="btn btn-hero-secondary">
-                        <i class="bi bi-play-circle"></i>
-                        Explorar conocimiento
+                    <a href="{{ url_for('iniciativa.iniciativa') }}" class="btn btn-outline btn-lg" style="border-color: rgba(255,255,255,0.3); color: white;">
+                        <i class="bi bi-play-circle me-2"></i>Explorar conocimiento
                     </a>
                 </div>
             </div>
-            
-            <div class="col-lg-6 hero-illustration d-none d-lg-block">
-                <svg class="hero-visual" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="250" cy="250" r="200" fill="url(#heroGrad1)" opacity="0.1"/>
-                    <circle cx="250" cy="250" r="150" fill="url(#heroGrad2)" opacity="0.15"/>
-                    <circle cx="250" cy="250" r="100" fill="url(#heroGrad3)" opacity="0.2"/>
-                    
-                    <path d="M150 200 Q250 150 350 200" stroke="rgba(241,196,15,0.4)" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                    <path d="M150 300 Q250 350 350 300" stroke="rgba(37,99,235,0.4)" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                    <path d="M200 150 Q250 250 200 350" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                    
-                    <circle cx="150" cy="200" r="25" fill="#2563eb" opacity="0.9"/>
-                    <circle cx="150" cy="200" r="15" fill="white"/>
-                    <text x="150" y="205" text-anchor="middle" fill="#2563eb" font-size="14" font-weight="bold">B</text>
-                    
-                    <circle cx="250" cy="150" r="30" fill="#f1c40f" opacity="0.9"/>
-                    <circle cx="250" cy="150" r="18" fill="white"/>
-                    <text x="250" y="155" text-anchor="middle" fill="#f1c40f" font-size="14" font-weight="bold">M</text>
-                    
-                    <circle cx="350" cy="200" r="25" fill="#10b981" opacity="0.9"/>
-                    <circle cx="350" cy="200" r="15" fill="white"/>
-                    <text x="350" y="205" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">V</text>
-                    
-                    <circle cx="200" cy="300" r="22" fill="#8b5cf6" opacity="0.9"/>
-                    <circle cx="200" cy="300" r="13" fill="white"/>
-                    <text x="200" y="305" text-anchor="middle" fill="#8b5cf6" font-size="12" font-weight="bold">C</text>
-                    
-                    <circle cx="300" cy="350" r="28" fill="#ef4444" opacity="0.9"/>
-                    <circle cx="300" cy="350" r="17" fill="white"/>
-                    <text x="300" y="355" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">A</text>
-                    
-                    <circle cx="350" cy="280" r="20" fill="#06b6d4" opacity="0.9"/>
-                    <circle cx="350" cy="280" r="12" fill="white"/>
-                    <text x="350" y="285" text-anchor="middle" fill="#06b6d4" font-size="11" font-weight="bold">S</text>
-                    
-                    <circle cx="250" cy="250" r="40" fill="url(#heroGrad4)"/>
-                    <circle cx="250" cy="250" r="30" fill="white"/>
-                    <text x="250" y="255" text-anchor="middle" fill="#071a40" font-size="20" font-weight="bold">CC</text>
-                    
-                    <line x1="150" y1="200" x2="250" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    <line x1="250" y1="150" x2="250" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    <line x1="350" y1="200" x2="250" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    <line x1="200" y1="300" x2="250" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    <line x1="300" y1="350" x2="250" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    <line x1="350" y1="280" x2="250" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    
-                    <defs>
-                        <radialGradient id="heroGrad1" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#2563eb"/>
-                            <stop offset="100%" stop-color="transparent"/>
-                        </radialGradient>
-                        <radialGradient id="heroGrad2" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#f1c40f"/>
-                            <stop offset="100%" stop-color="transparent"/>
-                        </radialGradient>
-                        <radialGradient id="heroGrad3" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#ffffff"/>
-                            <stop offset="100%" stop-color="transparent"/>
-                        </radialGradient>
-                        <linearGradient id="heroGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#071a40"/>
-                            <stop offset="100%" stop-color="#2563eb"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <div class="card-glass p-4" style="max-width: 380px; margin-left: auto;">
+                    <div class="text-start">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="step-number">1</div>
+                            <div>
+                                <div class="heading-sm text-white-50">Ciudadanía</div>
+                                <div class="fw-bold">Participación y voz</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="step-number">2</div>
+                            <div>
+                                <div class="heading-sm text-white-50">Conocimiento</div>
+                                <div class="fw-bold">Educación cívica</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="step-number">3</div>
+                            <div>
+                                <div class="heading-sm text-white-50">Inteligencia</div>
+                                <div class="fw-bold">Análisis con IA</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="step-number">4</div>
+                            <div>
+                                <div class="heading-sm text-white-50">Decisiones</div>
+                                <div class="fw-bold">Políticas basadas en datos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="ecosystem-section">
+<!-- Stats -->
+<section class="section" style="padding: var(--space-2xl) 0;">
     <div class="container">
-        <div class="section-header">
-            <span class="section-badge"><i class="bi bi-diagram-3"></i> El Ecosistema</span>
-            <h2 class="section-title">Cuatro mundos conectados por SRIE</h2>
-            <p class="section-subtitle">Un motor de inteligencia estratégica transforma información dispersa en conocimiento estructurado</p>
-        </div>
-        
-        <div class="ecosystem-flow">
-            <div class="ecosystem-node">
-                <div class="node-icon"><i class="bi bi-people-fill"></i></div>
-                <h4>Ciudadanía</h4>
-                <p>Participación y voz ciudadana</p>
-            </div>
-            <div class="ecosystem-arrow"><i class="bi bi-arrow-right"></i></div>
-            <div class="ecosystem-node">
-                <div class="node-icon"><i class="bi bi-book-fill"></i></div>
-                <h4>Conocimiento Público</h4>
-                <p>Educación cívica e información</p>
-            </div>
-            <div class="ecosystem-arrow"><i class="bi bi-arrow-right"></i></div>
-            <div class="ecosystem-node">
-                <div class="node-icon"><i class="bi bi-cpu-fill"></i></div>
-                <h4>Inteligencia Estratégica</h4>
-                <p>Análisis y evidencia con IA</p>
-            </div>
-            <div class="ecosystem-arrow"><i class="bi bi-arrow-right"></i></div>
-            <div class="ecosystem-node">
-                <div class="node-icon"><i class="bi bi-check2-square"></i></div>
-                <h4>Toma de Decisiones</h4>
-                <p>Políticas basadas en datos</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="stats-section">
-    <div class="container">
-        <div class="row g-4">
+        <div class="row g-4 text-center">
             <div class="col-md-6 col-lg-3">
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper primary">
-                        <i class="bi bi-people-fill"></i>
-                    </div>
-                    <div class="stat-value counter" data-target="{{ total_participaciones }}">0</div>
+                    <div class="stat-number text-blue counter" data-target="{{ total_participaciones }}">0</div>
                     <div class="stat-label">Participaciones</div>
-                    <span class="stat-trend up"><i class="bi bi-arrow-up"></i> Activo</span>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper success">
-                        <i class="bi bi-geo-alt-fill"></i>
-                    </div>
-                    <div class="stat-value counter" data-target="{{ total_departamentos }}">0</div>
+                    <div class="stat-number text-gold counter" data-target="{{ total_departamentos }}">0</div>
                     <div class="stat-label">Departamentos</div>
-                    <span class="stat-trend neutral"><i class="bi bi-check-circle"></i> Cobertura</span>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper warning">
-                        <i class="bi bi-tags-fill"></i>
-                    </div>
-                    <div class="stat-value counter" data-target="{{ total_sectores }}">0</div>
+                    <div class="stat-number text-navy counter" data-target="{{ total_sectores }}">0</div>
                     <div class="stat-label">Sectores</div>
-                    <span class="stat-trend neutral"><i class="bi bi-check-circle"></i> Priorizados</span>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper info">
-                        <i class="bi bi-lightbulb-fill"></i>
-                    </div>
-                    <div class="stat-value counter" data-target="{{ total_sectores }}">0</div>
+                    <div class="stat-number counter" data-target="{{ total_sectores }}" style="color: var(--success);">0</div>
                     <div class="stat-label">Sectores activos</div>
-                    <span class="stat-trend neutral"><i class="bi bi-check-circle"></i> Disponibles</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5 mt-5">
+<!-- Qué hacemos -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <div class="overline">El Ecosistema</div>
+            <h2 class="display-md">Cuatro mundos conectados por SRIE</h2>
+            <p>Un motor de inteligencia estratégica transforma información dispersa en conocimiento estructurado.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 animate-on-scroll">
+                <div class="card-premium h-100 text-center">
+                    <div class="step-number mb-3"><i class="bi bi-people-fill"></i></div>
+                    <h3 class="heading-lg mb-2">Ciudadanía</h3>
+                    <p class="text-muted-2">Participación y voz ciudadana en la construcción de políticas públicas.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 animate-on-scroll">
+                <div class="card-premium h-100 text-center">
+                    <div class="step-number mb-3"><i class="bi bi-book-fill"></i></div>
+                    <h3 class="heading-lg mb-2">Conocimiento Público</h3>
+                    <p class="text-muted-2">Educación cívica e información para una ciudadanía informada.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 animate-on-scroll">
+                <div class="card-premium h-100 text-center">
+                    <div class="step-number mb-3"><i class="bi bi-cpu-fill"></i></div>
+                    <h3 class="heading-lg mb-2">Inteligencia Estratégica</h3>
+                    <p class="text-muted-2">Análisis y evidencia con IA para la toma de decisiones.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 animate-on-scroll">
+                <div class="card-premium h-100 text-center">
+                    <div class="step-number mb-3"><i class="bi bi-check2-square"></i></div>
+                    <h3 class="heading-lg mb-2">Toma de Decisiones</h3>
+                    <p class="text-muted-2">Políticas basadas en datos que reflejan las necesidades reales.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Misión y Visión -->
+<section class="section">
     <div class="container">
         <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="mission-card">
-                    <h3><i class="bi bi-bullseye"></i> Nuestra misión</h3>
-                    <p>
-                        Conectar la participación ciudadana con la inteligencia estratégica para transformar 
+            <div class="col-lg-6 animate-on-scroll">
+                <div class="card-premium h-100" style="background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: white; border-color: transparent;">
+                    <div class="step-number mb-3" style="background: rgba(255,255,255,0.15); color: var(--gold);"><i class="bi bi-bullseye"></i></div>
+                    <h3 class="heading-lg mb-2">Nuestra misión</h3>
+                    <p class="text-white-50 body-md">
+                        Conectar la participación ciudadana con la inteligencia estratégica para transformar
                         las ideas de los colombianos en evidencia útil para la toma de decisiones públicas.
                     </p>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="mission-card" style="background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);">
-                    <h3><i class="bi bi-eye-fill"></i> Nuestra visión</h3>
-                    <p>
-                        Ser el primer Ecosistema Colombiano de Inteligencia Pública, donde cualquier ciudadano 
-                        pueda aprender, participar, consultar, comparar, proponer y comprender cómo se construyen 
+            <div class="col-lg-6 animate-on-scroll">
+                <div class="card-premium h-100" style="background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%); color: white; border-color: transparent;">
+                    <div class="step-number mb-3" style="background: rgba(255,255,255,0.15); color: var(--gold);"><i class="bi bi-eye-fill"></i></div>
+                    <h3 class="heading-lg mb-2">Nuestra visión</h3>
+                    <p class="text-white-50 body-md">
+                        Ser el primer Ecosistema Colombiano de Inteligencia Pública, donde cualquier ciudadano
+                        pueda aprender, participar, consultar, comparar, proponer y comprender cómo se construyen
                         las decisiones públicas.
                     </p>
                 </div>
             </div>
         </div>
-        
-        <div class="mt-5">
-            <h4 class="text-center fw-bold mb-4">Nuestros principios</h4>
-            <div class="principles-grid">
-                <div class="principle-item">
-                    <div class="principle-icon"><i class="bi bi-people-fill"></i></div>
-                    <span>Participación</span>
+
+        <div class="section-header mt-5 pt-4 animate-on-scroll">
+            <div class="overline">Principios</div>
+            <h2 class="display-md">Nuestros valores fundamentales</h2>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4 col-lg animate-on-scroll">
+                <div class="card-glass text-center p-4" style="background: var(--surface-2); border-color: var(--border);">
+                    <div class="step-number mb-2"><i class="bi bi-people-fill"></i></div>
+                    <span class="fw-semibold">Participación</span>
                 </div>
-                <div class="principle-item">
-                    <div class="principle-icon"><i class="bi bi-eye-fill"></i></div>
-                    <span>Transparencia</span>
+            </div>
+            <div class="col-md-4 col-lg animate-on-scroll">
+                <div class="card-glass text-center p-4" style="background: var(--surface-2); border-color: var(--border);">
+                    <div class="step-number mb-2"><i class="bi bi-eye-fill"></i></div>
+                    <span class="fw-semibold">Transparencia</span>
                 </div>
-                <div class="principle-item">
-                    <div class="principle-icon"><i class="bi bi-database-fill"></i></div>
-                    <span>Datos abiertos</span>
+            </div>
+            <div class="col-md-4 col-lg animate-on-scroll">
+                <div class="card-glass text-center p-4" style="background: var(--surface-2); border-color: var(--border);">
+                    <div class="step-number mb-2"><i class="bi bi-database-fill"></i></div>
+                    <span class="fw-semibold">Datos abiertos</span>
                 </div>
-                <div class="principle-item">
-                    <div class="principle-icon"><i class="bi bi-hands-fill"></i></div>
-                    <span>Construcción colectiva</span>
+            </div>
+            <div class="col-md-4 col-lg animate-on-scroll">
+                <div class="card-glass text-center p-4" style="background: var(--surface-2); border-color: var(--border);">
+                    <div class="step-number mb-2"><i class="bi bi-hands-fill"></i></div>
+                    <span class="fw-semibold">Construcción colectiva</span>
                 </div>
-                <div class="principle-item">
-                    <div class="principle-icon"><i class="bi bi-graph-up-arrow"></i></div>
-                    <span>Evidencia para la acción</span>
+            </div>
+            <div class="col-md-4 col-lg animate-on-scroll">
+                <div class="card-glass text-center p-4" style="background: var(--surface-2); border-color: var(--border);">
+                    <div class="step-number mb-2"><i class="bi bi-graph-up-arrow"></i></div>
+                    <span class="fw-semibold">Evidencia para la acción</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5 bg-light">
+<!-- Cómo funciona -->
+<section class="section section-alt">
     <div class="container">
-        <div class="section-header">
-            <span class="section-badge"><i class="bi bi-diagram-3"></i> Nuestro proceso</span>
-            <h2 class="section-title">¿Cómo funciona el ecosistema?</h2>
-            <p class="section-subtitle">Un proceso inteligente que transforma la voz ciudadana en conocimiento estratégico</p>
+        <div class="section-header animate-on-scroll">
+            <div class="overline">Nuestro Proceso</div>
+            <h2 class="display-md">¿Cómo funciona el ecosistema?</h2>
+            <p>Un proceso inteligente que transforma la voz ciudadana en conocimiento estratégico.</p>
         </div>
-        
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="timeline-step">Paso 01</span>
-                    <h4 class="timeline-title">Escuchamos</h4>
-                    <p class="timeline-desc">Recibimos las ideas, necesidades y propuestas de los ciudadanos de todo el país.</p>
-                </div>
-                <div class="timeline-dot"><i class="bi bi-megaphone-fill"></i></div>
-                <div class="timeline-content" style="visibility: hidden;"></div>
-            </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-content" style="visibility: hidden;"></div>
-                <div class="timeline-dot"><i class="bi bi-folder-fill"></i></div>
-                <div class="timeline-content">
-                    <span class="timeline-step">Paso 02</span>
-                    <h4 class="timeline-title">Organizamos</h4>
-                    <p class="timeline-desc">Clasificamos y estructuramos la información por sectores y territorios mediante SRIE.</p>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Escuchamos</h3>
+                    <p>Recibimos las ideas, necesidades y propuestas de los ciudadanos de todo el país.</p>
                 </div>
             </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="timeline-step">Paso 03</span>
-                    <h4 class="timeline-title">Analizamos</h4>
-                    <p class="timeline-desc">Aplicamos analítica avanzada e inteligencia artificial para identificar tendencias y patrones.</p>
-                </div>
-                <div class="timeline-dot"><i class="bi bi-graph-up"></i></div>
-                <div class="timeline-content" style="visibility: hidden;"></div>
-            </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-content" style="visibility: hidden;"></div>
-                <div class="timeline-dot"><i class="bi bi-lightbulb-fill"></i></div>
-                <div class="timeline-content">
-                    <span class="timeline-step">Paso 04</span>
-                    <h4 class="timeline-title">Generamos evidencia</h4>
-                    <p class="timeline-desc">Convertimos los datos en inteligencia estratégica para la toma de decisiones.</p>
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Organizamos</h3>
+                    <p>Clasificamos y estructuramos la información por sectores y territorios mediante SRIE.</p>
                 </div>
             </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="timeline-step">Paso 05</span>
-                    <h4 class="timeline-title">Construimos país</h4>
-                    <p class="timeline-desc">La inteligencia generada alimenta políticas públicas, planes de desarrollo y decisiones basadas en evidencia.</p>
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Analizamos</h3>
+                    <p>Aplicamos analítica avanzada e inteligencia artificial para identificar tendencias y patrones.</p>
                 </div>
-                <div class="timeline-dot"><i class="bi bi-flag-fill"></i></div>
-                <div class="timeline-content" style="visibility: hidden;"></div>
+            </div>
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Generamos evidencia</h3>
+                    <p>Convertimos los datos en inteligencia estratégica para la toma de decisiones.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <h3>Construimos país</h3>
+                    <p>La inteligencia generada alimenta políticas públicas, planes de desarrollo y decisiones basadas en evidencia.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="step-card">
+                    <div class="step-number" style="background: var(--gold-light); color: var(--navy);"><i class="bi bi-stars"></i></div>
+                    <h3>Resultado SRIE</h3>
+                    <p>Recibe inmediatamente la clasificación de tu propuesta con el motor de inteligencia estratégica.</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5">
+<!-- Beneficios -->
+<section class="section section-dark">
     <div class="container">
-        <div class="section-header">
-            <span class="section-badge"><i class="bi bi-question-circle"></i> Dudas frecuentes</span>
-            <h2 class="section-title">Preguntas Frecuentes</h2>
+        <div class="section-header animate-on-scroll">
+            <div class="overline" style="color: var(--gold);">Beneficios</div>
+            <h2 class="display-md text-white">¿Por qué participar?</h2>
+            <p class="text-white-50">Tu participación tiene impacto real en las prioridades nacionales.</p>
         </div>
-        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6 animate-on-scroll">
+                <div class="card-glass text-center">
+                    <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">🎯</div>
+                    <h3 class="heading-md text-white mb-2">Impacto directo</h3>
+                    <p class="text-white-50 body-sm">Tu voz se conecta directamente con las políticas públicas del país.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 animate-on-scroll">
+                <div class="card-glass text-center">
+                    <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">🔒</div>
+                    <h3 class="heading-md text-white mb-2">Anonimato</h3>
+                    <p class="text-white-50 body-sm">No necesitas crear cuenta. Tu privacidad está protegida.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 animate-on-scroll">
+                <div class="card-glass text-center">
+                    <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">⚡</div>
+                    <h3 class="heading-md text-white mb-2">Instantáneo</h3>
+                    <p class="text-white-50 body-sm">Recibes la clasificación SRIE de tu propuesta en tiempo real.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 animate-on-scroll">
+                <div class="card-glass text-center">
+                    <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">📊</div>
+                    <h3 class="heading-md text-white mb-2">Transparente</h3>
+                    <p class="text-white-50 body-sm">Los resultados son públicos para toda Colombia.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <div class="overline">Dudas frecuentes</div>
+            <h2 class="display-md">Preguntas Frecuentes</h2>
+        </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="accordion" id="faqAccordion">
-                    <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                ¿Qué es el Laboratorio de Inteligencia Pública?
-                            </button>
-                        </h2>
-                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body text-secondary">
-                                Es un Ecosistema Nacional de Inteligencia Pública que conecta la participación ciudadana con el conocimiento, la evidencia y la toma de decisiones. Impulsado por StoneLytics y su tecnología SRIE.
-                            </div>
+                <div class="faq-item animate-on-scroll">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        ¿Qué es el Laboratorio de Inteligencia Pública?
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Es un Ecosistema Nacional de Inteligencia Pública que conecta la participación ciudadana con el conocimiento, la evidencia y la toma de decisiones. Impulsado por StoneLytics y su tecnología SRIE.
                         </div>
                     </div>
-                    <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                ¿Necesito crear una cuenta para participar?
-                            </button>
-                        </h2>
-                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body text-secondary">
-                                No. La participación es completamente anónima y no requiere registro ni credenciales. Solo toma entre 3 y 5 minutos.
-                            </div>
+                </div>
+                <div class="faq-item animate-on-scroll">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        ¿Necesito crear una cuenta para participar?
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            No. La participación es completamente anónima y no requiere registro ni credenciales. Solo toma entre 3 y 5 minutos.
                         </div>
                     </div>
-                    <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                ¿Cómo se utiliza mi participación?
-                            </button>
-                        </h2>
-                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body text-secondary">
-                                Tus respuestas son procesadas por el motor SRIE, que las clasifica y estructura para generar inteligencia estratégica. Los resultados agregados alimentan informes y análisis para la toma de decisiones públicas.
-                            </div>
+                </div>
+                <div class="faq-item animate-on-scroll">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        ¿Cómo se utiliza mi participación?
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Tus respuestas son procesadas por el motor SRIE, que las clasifica y estructura para generar inteligencia estratégica. Los resultados agregados alimentan informes y análisis para la toma de decisiones públicas.
                         </div>
                     </div>
-                    <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                                ¿Quién lidera esta iniciativa?
-                            </button>
-                        </h2>
-                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body text-secondary">
-                                Esta iniciativa es desarrollada por StoneLytics, una empresa comprometida con la construcción de inteligencia pública para la toma de decisiones basada en datos y evidencia.
-                            </div>
+                </div>
+                <div class="faq-item animate-on-scroll">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        ¿Quién lidera esta iniciativa?
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Esta iniciativa es desarrollada por StoneLytics, una empresa comprometida con la construcción de inteligencia pública para la toma de decisiones basada en datos y evidencia.
                         </div>
                     </div>
-                    <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                                ¿Puedo participar desde cualquier lugar de Colombia?
-                            </button>
-                        </h2>
-                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body text-secondary">
-                                Sí. La plataforma está disponible para todos los colombianos, tanto en Colombia como en el exterior. Solo necesitas acceso a internet.
-                            </div>
+                </div>
+                <div class="faq-item animate-on-scroll">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        ¿Puedo participar desde cualquier lugar de Colombia?
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Sí. La plataforma está disponible para todos los colombianos, tanto en Colombia como en el exterior. Solo necesitas acceso a internet.
                         </div>
                     </div>
                 </div>
@@ -380,16 +369,18 @@
     </div>
 </section>
 
-<section class="py-5" style="background: linear-gradient(135deg, #071a40 0%, #0f2f75 100%);">
-    <div class="container text-center">
-        <h2 class="fw-bold text-white mb-3" style="font-size: 2.5rem;">¿Listo para construir país?</h2>
-        <p class="text-white-50 mb-4" style="font-size: 1.15rem; max-width: 600px; margin: 0 auto;">
-            Tu voz es el primer insumo de la inteligencia pública. Participa y ayuda a construir las decisiones del futuro.
-        </p>
-        <a href="{{ url_for('participar.participar') }}" class="btn btn-hero-primary">
-            <i class="bi bi-arrow-right-circle"></i>
-            Quiero participar
-        </a>
+<!-- CTA Final -->
+<section class="section section-dark text-center">
+    <div class="container">
+        <div class="animate-on-scroll">
+            <h2 class="display-md text-white mb-3">¿Listo para construir país?</h2>
+            <p class="text-white-50 body-lg mb-4" style="max-width: 600px; margin: 0 auto;">
+                Tu voz es el primer insumo de la inteligencia pública. Participa y ayuda a construir las decisiones del futuro.
+            </p>
+            <a href="{{ url_for('participar.participar') }}" class="btn btn-gold btn-lg">
+                <i class="bi bi-arrow-right-circle me-2"></i>Quiero participar
+            </a>
+        </div>
     </div>
 </section>
 {% endblock %}
@@ -397,18 +388,20 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const counters = document.querySelectorAll('.counter');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+        var counters = document.querySelectorAll('.counter');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
-                    const target = parseInt(entry.target.dataset.target);
+                    var target = parseInt(entry.target.getAttribute('data-target'));
                     animateCounter(entry.target, target);
                     observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.5 });
 
-        counters.forEach(counter => observer.observe(counter));
+        counters.forEach(function(counter) {
+            observer.observe(counter);
+        });
     });
 </script>
 {% endblock %}
