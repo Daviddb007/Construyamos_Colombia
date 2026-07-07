@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Asistente Público SRIE - Construyamos Colombia{% endblock %}
+
+{% block content %}
+<section class="page-header bg-primary text-white" style="background: linear-gradient(135deg, var(--colombian-navy) 0%, #0f172a 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold mb-2">Asistente Público SRIE</h1>
+                <p class="lead mb-0 opacity-90">Pregunta todo sobre el Estado colombiano. Respuestas basadas en información oficial.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <span class="badge bg-light text-dark px-3 py-2">
+                    <i class="bi bi-cpu me-1"></i>Especialista en Estado colombiano
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="asistente-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="asistente-card">
+                    <div class="asistente-header">
+                        <div class="asistente-avatar">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">Asistente SRIE</h5>
+                            <small class="text-white-50">Especialista en Estado colombiano</small>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="asistente-badge">
+                                <i class="bi bi-shield-fill-check me-1"></i>Fuentes oficiales
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="asistente-body" id="chatBody">
+                        <div class="chat-bubble bot-bubble animate-in">
+                            <div class="chat-avatar bot-avatar"><i class="bi bi-cpu-fill"></i></div>
+                            <div class="chat-content">
+                                <p class="mb-1"><strong>¡Hola! Soy el Asistente Público SRIE.</strong></p>
+                                <p class="mb-1">Soy un especialista en el Estado colombiano. Puedo responder preguntas como:</p>
+                                <ul class="mb-0 small">
+                                    <li>¿Qué hace un CONPES?</li>
+                                    <li>¿Cómo funciona el sistema de salud?</li>
+                                    <li>¿Qué políticas existen para jóvenes?</li>
+                                    <li>¿Qué dice el PND sobre vivienda?</li>
+                                    <li>¿Cómo puedo participar?</li>
+                                </ul>
+                                <p class="mt-2 mb-0"><em>¿En qué puedo ayudarte?</em></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="asistente-footer">
+                        <div id="chatInputContainer">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="chatInput"
+                                       placeholder="Escribe tu pregunta sobre el Estado colombiano..."
+                                       onkeydown="if(event.key==='Enter') enviarPregunta()">
+                                <button class="btn btn-primary" onclick="enviarPregunta()" id="btnEnviar">
+                                    <i class="bi bi-send-fill"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="mostrarSugerencias()" title="Preguntas sugeridas">
+                                    <i class="bi bi-lightbulb"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="chatLoading" class="chat-loading" style="display: none;">
+                            <div class="typing-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <small class="text-muted ms-2">Consultando base de conocimiento...</small>
+                        </div>
+                        <div id="sugerenciasPanel" class="sugerencias-panel" style="display: none;">
+                            <div class="sugerencias-header">
+                                <small class="fw-bold text-muted">Preguntas sugeridas</small>
+                                <button class="btn btn-sm" onclick="cerrarSugerencias()"><i class="bi bi-x"></i></button>
+                            </div>
+                            <div class="sugerencias-grid">
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Qué es un CONPES?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Cómo se hace una ley en Colombia?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Qué políticas existen para jóvenes?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Cómo funciona el sistema de salud?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Qué dice el PND sobre vivienda?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Qué ministerios existen?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Cómo puedo participar en políticas públicas?</button>
+                                <button class="sugerencia-btn" onclick="usarSugerencia(this)">¿Qué hace la Corte Constitucional?</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/asistente.js') }}"></script>
+{% endblock %}
