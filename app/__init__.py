@@ -85,6 +85,8 @@ def _register_blueprints(app: Flask) -> None:
     from app.routes.laboratorio import laboratorio_bp
     from app.routes.analitica import analitica_bp
     from app.routes.api_v1 import api_v1_bp
+    from app.routes.integraciones import integraciones_bp
+    from app.routes.saas import saas_bp
 
     app.register_blueprint(home_bp)
     app.register_blueprint(iniciativa_bp)
@@ -98,6 +100,8 @@ def _register_blueprints(app: Flask) -> None:
     app.register_blueprint(laboratorio_bp)
     app.register_blueprint(analitica_bp)
     app.register_blueprint(api_v1_bp)
+    app.register_blueprint(integraciones_bp)
+    app.register_blueprint(saas_bp)
 
     @app.route('/api/docs')
     def api_docs():
