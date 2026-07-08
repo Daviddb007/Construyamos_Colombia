@@ -3,25 +3,25 @@
 {% block title %}{{ politica.titulo }} - Biblioteca Inteligente{% endblock %}
 
 {% block content %}
-<section class="page-header bg-primary text-white" style="background: linear-gradient(135deg, var(--colombian-navy) 0%, #0f172a 100%);">
+<section class="hero-section" style="min-height: 30vh; padding: 120px 0 60px;">
     <div class="container">
-        <a href="{{ url_for('biblioteca.lista') }}" class="btn btn-sm btn-outline-light mb-3" style="border-radius: 50px;">
+        <a href="{{ url_for('biblioteca.lista') }}" class="btn btn-sm" style="background: rgba(255,255,255,.12); color: #fff; border-radius: 50px; margin-bottom: var(--space-md);">
             <i class="bi bi-arrow-left me-1"></i> Volver a la biblioteca
         </a>
-        <h1 class="display-5 fw-bold mb-2">{{ politica.titulo }}</h1>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
+        <h1 class="hero-title">{{ politica.titulo }}</h1>
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
             {% if politica.sector %}
-            <span class="badge bg-light text-dark px-3 py-2">{{ politica.sector.nombre }}</span>
+            <span class="hero-badge" style="background: rgba(255,255,255,.12); font-size: .8rem;">{{ politica.sector.nombre }}</span>
             {% endif %}
-            <span class="badge status-{{ politica.estado|lower|replace(' ', '-') }} px-3 py-2">{{ politica.estado }}</span>
+            <span class="hero-badge" style="background: rgba(255,255,255,.12); font-size: .8rem;">{{ politica.estado }}</span>
             {% if politica.alcance %}
-            <span class="badge bg-info text-dark px-3 py-2"><i class="bi bi-geo-alt me-1"></i>{{ politica.alcance }}</span>
+            <span class="hero-badge" style="background: rgba(255,255,255,.12); font-size: .8rem;"><i class="bi bi-geo-alt me-1"></i>{{ politica.alcance }}</span>
             {% endif %}
         </div>
     </div>
 </section>
 
-<section class="py-5">
+<section class="section" style="margin-top: -60px;">
     <div class="container">
         <div class="row">
             <div class="col-lg-8">

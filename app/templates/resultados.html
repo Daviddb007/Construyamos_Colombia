@@ -27,7 +27,7 @@
     <div class="container">
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-modern">
                     <div class="stat-icon-wrapper primary">
                         <i class="bi bi-people-fill"></i>
                     </div>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-modern">
                     <div class="stat-icon-wrapper success">
                         <i class="bi bi-collection-fill"></i>
                     </div>
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-modern">
                     <div class="stat-icon-wrapper warning">
                         <i class="bi bi-geo-alt-fill"></i>
                     </div>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-modern">
                     <div class="stat-icon-wrapper info">
                         <i class="bi bi-tags-fill"></i>
                     </div>
@@ -80,39 +80,36 @@
 
         <div class="row g-4">
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-diagram-3 me-2 text-primary"></i>Pilares estratégicos
-                        </h5>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--blue-light); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Pilares estratégicos</h5>
                     </div>
-                    <div class="card-body">
-                        <canvas id="chartSriePilares" height="280"></canvas>
-                    </div>
+                    <canvas id="chartSriePilares" height="280"></canvas>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-exclamation-triangle me-2 text-warning"></i>Nivel de urgencia
-                        </h5>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--warning-light); color: var(--warning); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Nivel de urgencia</h5>
                     </div>
-                    <div class="card-body">
-                        <canvas id="chartSrieUrgencia" height="280"></canvas>
-                    </div>
+                    <canvas id="chartSrieUrgencia" height="280"></canvas>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-globe me-2 text-success"></i>Alcance de impacto
-                        </h5>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--success-light); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Alcance de impacto</h5>
                     </div>
-                    <div class="card-body">
-                        <canvas id="chartSrieImpacto" height="280"></canvas>
-                    </div>
+                    <canvas id="chartSrieImpacto" height="280"></canvas>
                 </div>
             </div>
         </div>
@@ -129,30 +126,28 @@
 
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-bar-chart-fill me-2 text-primary"></i>Sectores priorizados
-                        </h5>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--blue-light); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-bar-chart-fill"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Sectores priorizados</h5>
                     </div>
-                    <div class="card-body">
-                        <canvas id="chartSectores" height="300"></canvas>
-                    </div>
+                    <canvas id="chartSectores" height="300"></canvas>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-geo-alt me-2 text-warning"></i>Ranking departamental
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="listaDepartamentos" style="max-height: 360px; overflow-y: auto;">
-                            <p class="text-muted text-center py-4">
-                                <span class="spinner-border spinner-border-sm me-2"></span>Cargando...
-                            </p>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--warning-light); color: var(--warning); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-geo-alt"></i>
                         </div>
+                        <h5 class="mb-0 fw-bold">Ranking departamental</h5>
+                    </div>
+                    <div id="listaDepartamentos" style="max-height: 360px; overflow-y: auto;">
+                        <p class="text-muted text-center py-4">
+                            <span class="spinner-border spinner-border-sm me-2"></span>Cargando...
+                        </p>
                     </div>
                 </div>
             </div>
@@ -164,27 +159,25 @@
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-exclamation-triangle me-2 text-danger"></i>Problemas más mencionados
-                        </h5>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--danger-light); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Problemas más mencionados</h5>
                     </div>
-                    <div class="card-body">
-                        <canvas id="chartProblemas" height="280"></canvas>
-                    </div>
+                    <canvas id="chartProblemas" height="280"></canvas>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-clock-history me-2 text-info"></i>Tendencia de participación
-                        </h5>
+                <div class="card-premium h-100">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--info-light); color: var(--info); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Tendencia de participación</h5>
                     </div>
-                    <div class="card-body">
-                        <canvas id="chartTendencia" height="280"></canvas>
-                    </div>
+                    <canvas id="chartTendencia" height="280"></canvas>
                 </div>
             </div>
         </div>
@@ -199,13 +192,11 @@
             <p class="section-subtitle">Las últimas participaciones de ciudadanos de todo el país</p>
         </div>
 
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <div id="listaPropuestas">
-                    <p class="text-muted text-center py-4">
-                        <span class="spinner-border spinner-border-sm me-2"></span>Cargando propuestas...
-                    </p>
-                </div>
+        <div class="card-premium p-4">
+            <div id="listaPropuestas">
+                <p class="text-muted text-center py-4">
+                    <span class="spinner-border spinner-border-sm me-2"></span>Cargando propuestas...
+                </p>
             </div>
         </div>
 

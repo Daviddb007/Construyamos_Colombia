@@ -3,42 +3,41 @@
 {% block title %}Biblioteca Inteligente - Laboratorio de Inteligencia Pública{% endblock %}
 
 {% block content %}
-<section class="page-header bg-primary text-white" style="background: linear-gradient(135deg, var(--colombian-navy) 0%, #0f172a 100%);">
+<section class="hero-section" style="min-height: 40vh; padding: 120px 0 60px;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-5 fw-bold mb-2">Biblioteca Inteligente</h1>
-                <p class="lead mb-0 opacity-90">Explora políticas públicas colombianas como experiencias interactivas, no como documentos</p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                <span class="badge bg-light text-dark px-3 py-2">
-                    <i class="bi bi-collection me-1"></i>{{ politicas|length }} políticas
+                <span class="hero-badge mb-3">
+                    <i class="bi bi-collection"></i>
+                    Biblioteca Inteligente · {{ politicas|length }} políticas
                 </span>
+                <h1 class="hero-title" style="font-size: 3rem;">Biblioteca Inteligente</h1>
+                <p class="hero-subtitle" style="max-width: 600px;">
+                    Explora políticas públicas colombianas como experiencias interactivas, no como documentos
+                </p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5">
+<section class="section" style="margin-top: -60px;">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <form method="GET" class="d-flex gap-2" id="filterForm">
-                    <select name="sector" class="form-select" style="max-width: 250px; border-radius: 12px;" onchange="this.form.submit()">
-                        <option value="">Todos los sectores</option>
-                        {% for s in sectores %}
-                        <option value="{{ s.id }}" {% if sector_filter == s.id|string %}selected{% endif %}>{{ s.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                    <select name="estado" class="form-select" style="max-width: 200px; border-radius: 12px;" onchange="this.form.submit()">
-                        <option value="">Todos los estados</option>
-                        <option value="Activa" {% if estado_filter == 'Activa' %}selected{% endif %}>Activa</option>
-                        <option value="En formulación" {% if estado_filter == 'En formulación' %}selected{% endif %}>En formulación</option>
-                        <option value="Evaluación" {% if estado_filter == 'Evaluación' %}selected{% endif %}>En evaluación</option>
-                        <option value="Completada" {% if estado_filter == 'Completada' %}selected{% endif %}>Completada</option>
-                    </select>
-                </form>
-            </div>
+        <div class="d-flex flex-wrap gap-3 mb-4">
+            <form method="GET" class="d-flex gap-2 flex-wrap" id="filterForm">
+                <select name="sector" class="form-select" style="max-width: 250px; border-radius: 50px;" onchange="this.form.submit()">
+                    <option value="">Todos los sectores</option>
+                    {% for s in sectores %}
+                    <option value="{{ s.id }}" {% if sector_filter == s.id|string %}selected{% endif %}>{{ s.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <select name="estado" class="form-select" style="max-width: 200px; border-radius: 50px;" onchange="this.form.submit()">
+                    <option value="">Todos los estados</option>
+                    <option value="Activa" {% if estado_filter == 'Activa' %}selected{% endif %}>Activa</option>
+                    <option value="En formulación" {% if estado_filter == 'En formulación' %}selected{% endif %}>En formulación</option>
+                    <option value="Evaluación" {% if estado_filter == 'Evaluación' %}selected{% endif %}>En evaluación</option>
+                    <option value="Completada" {% if estado_filter == 'Completada' %}selected{% endif %}>Completada</option>
+                </select>
+            </form>
         </div>
 
         <div class="row g-4">
