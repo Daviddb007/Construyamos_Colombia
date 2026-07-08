@@ -39,7 +39,7 @@ echo -e "\n${YELLOW}[2/7] Setting up application...${NC}"
 cd /var/www
 
 if [ ! -d "inteligenciapublica" ]; then
-    git clone https://github.com/Daviddb007/Construyamos_Colombia.git inteligenciapublica
+    git clone https://github.com/Daviddb007/LIP.git inteligenciapublica
 fi
 
 cd inteligenciapublica
