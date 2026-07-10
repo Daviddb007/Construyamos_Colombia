@@ -113,6 +113,9 @@
                 <a href="{{ url_for('admin.api_exportar') }}" class="btn btn-sm btn-outline-warning">
                     <i class="bi bi-download me-1"></i>Exportar CSV
                 </a>
+                <a href="#" class="btn btn-sm btn-outline-dark" onclick="mostrarModulo('equipo'); return false;">
+                    <i class="bi bi-people me-1"></i>Equipo
+                </a>
                 <a href="{{ url_for('home.index') }}" class="btn btn-sm btn-outline-secondary">
                     <i class="bi bi-box-arrow-up-right me-1"></i>Ir al sitio
                 </a>
@@ -290,6 +293,43 @@
         </div>
     </div>
 
+    <div id="modulo-equipo" style="display: none;">
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="filter-card p-4">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="module-icon" style="background: #ede9fe; color: #7c3aed;"><i class="bi bi-people-fill"></i></div>
+                        <div><h5 class="fw-bold mb-0">Gestión de Equipo</h5><small class="text-muted">Agrega y edita los miembros del equipo para la página "Nosotros"</small></div>
+                    </div>
+                    <form id="formMiembro" class="row g-3 mb-4 p-3" style="background: #f8fafc; border-radius: 12px;">
+                        <input type="hidden" id="miembroId">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Nombre *</label>
+                            <input type="text" class="form-control" id="inputNombre" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Cargo</label>
+                            <input type="text" class="form-control" id="inputCargo" placeholder="Ej: Fundador">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">URL de Foto</label>
+                            <input type="url" class="form-control" id="inputFotoUrl" placeholder="https://...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Descripción</label>
+                            <textarea class="form-control" id="inputDescripcion" rows="2" placeholder="Breve descripción del miembro"></textarea>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Guardar</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="cancelarEdicion()">Cancelar</button>
+                        </div>
+                    </form>
+                    <div id="listaMiembros"><p class="text-muted text-center py-3"><span class="spinner-border spinner-border-sm me-2"></span>Cargando...</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalDetalle" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border-radius: 16px;">
@@ -312,15 +352,12 @@
         });
 
         function mostrarModulo(modulo) {
-            document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.btn-group .btn, .btn-outline-primary.active, .btn-outline-success, .btn-outline-info, .btn-outline-dark').forEach(b => b.classList.remove('active'));
             event.target.closest('.btn').classList.add('active');
-            if (modulo === 'participaciones') {
-                document.getElementById('modulo-participaciones').style.display = 'block';
-                document.getElementById('modulo-alertas').style.display = 'none';
-            } else {
-                document.getElementById('modulo-participaciones').style.display = 'none';
-                document.getElementById('modulo-alertas').style.display = 'block';
-            }
+            ['modulo-participaciones','modulo-alertas','modulo-indicadores','modulo-equipo'].forEach(id => {
+                document.getElementById(id).style.display = (id === 'modulo-' + modulo) ? 'block' : 'none';
+            });
+            if (modulo === 'equipo') cargarMiembros();
         }
 
         async function cargarParticipaciones(pagina = 1) {
@@ -471,6 +508,83 @@
         document.getElementById('filtroBusqueda')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') cargarParticipaciones(1);
         });
+
+        document.getElementById('formMiembro').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                id: document.getElementById('miembroId').value || null,
+                nombre: document.getElementById('inputNombre').value,
+                cargo: document.getElementById('inputCargo').value,
+                descripcion: document.getElementById('inputDescripcion').value,
+                foto_url: document.getElementById('inputFotoUrl').value,
+                orden: 0,
+                activo: true,
+            };
+            try {
+                const r = await fetch('/admin/api/miembros', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data),
+                });
+                if (r.ok) {
+                    cancelarEdicion();
+                    cargarMiembros();
+                }
+            } catch(e) { console.error(e); }
+        });
+
+        async function cargarMiembros() {
+            try {
+                const r = await fetch('/admin/api/miembros');
+                const miembros = await r.json();
+                const container = document.getElementById('listaMiembros');
+                if (!miembros.length) {
+                    container.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-people" style="font-size: 2rem;"></i><p class="mt-2">No hay miembros. Agrega el primero.</p></div>';
+                    return;
+                }
+                container.innerHTML = miembros.map(m => `
+                    <div class="d-flex align-items-center gap-3 p-3 mb-2" style="background: #f8fafc; border-radius: 12px;">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: ${m.foto_url ? 'url('+m.foto_url+') center/cover' : '#e2e8f0'}; ${m.foto_url ? '' : 'display:flex;align-items:center;justify-content:center'}; overflow: hidden; flex-shrink: 0;">
+                            ${m.foto_url ? '' : '<i class="bi bi-person-fill" style="color:#94a3b8;font-size:1.5rem;"></i>'}
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>${m.nombre}</strong>
+                            ${m.cargo ? '<br><small class="text-muted">' + m.cargo + '</small>' : ''}
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarMiembro(${m.id})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarMiembro(${m.id})"><i class="bi bi-trash"></i></button>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        async function editarMiembro(id) {
+            try {
+                const r = await fetch('/admin/api/miembros');
+                const miembros = await r.json();
+                const m = miembros.find(x => x.id === id);
+                if (!m) return;
+                document.getElementById('miembroId').value = m.id;
+                document.getElementById('inputNombre').value = m.nombre;
+                document.getElementById('inputCargo').value = m.cargo || '';
+                document.getElementById('inputDescripcion').value = m.descripcion || '';
+                document.getElementById('inputFotoUrl').value = m.foto_url || '';
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } catch(e) { console.error(e); }
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('miembroId').value = '';
+            document.getElementById('formMiembro').reset();
+        }
+
+        async function eliminarMiembro(id) {
+            if (!confirm('¿Eliminar este miembro?')) return;
+            try {
+                await fetch('/admin/api/miembros/' + id, {method: 'DELETE'});
+                cargarMiembros();
+            } catch(e) { console.error(e); }
+        }
     </script>
 </body>
 </html>

@@ -10,6 +10,7 @@ from app.forms import LoginForm
 from app.models.participacion import Participacion
 from app.models.politica import Politica
 from app.models.sector import Sector
+from app.models.miembro import MiembroEquipo
 from app.services.stats_service import get_estadisticas_completas
 from app.services.export_service import exportar_participaciones_csv
 from sqlalchemy import func
@@ -153,3 +154,45 @@ def api_exportar():
         'Content-Type': 'text/csv',
         'Content-Disposition': 'attachment; filename=participaciones.csv',
     }
+
+
+@admin_bp.route('/api/miembros', methods=['GET'])
+@login_required
+def api_listar_miembros():
+    miembros = MiembroEquipo.query.order_by(MiembroEquipo.orden).all()
+    return jsonify([m.to_dict() for m in miembros])
+
+
+@admin_bp.route('/api/miembros', methods=['POST'])
+@login_required
+def api_guardar_miembro():
+    data = request.get_json(silent=True)
+    if not data or not data.get('nombre'):
+        return jsonify({'error': 'Nombre requerido'}), 400
+
+    miembro_id = data.get('id')
+    if miembro_id:
+        miembro = MiembroEquipo.query.get_or_404(miembro_id)
+    else:
+        miembro = MiembroEquipo()
+
+    miembro.nombre = data['nombre']
+    miembro.cargo = data.get('cargo', '')
+    miembro.descripcion = data.get('descripcion', '')
+    miembro.foto_url = data.get('foto_url', '')
+    miembro.orden = data.get('orden', 0)
+    miembro.activo = data.get('activo', True)
+
+    db.session.add(miembro)
+    db.session.commit()
+
+    return jsonify(miembro.to_dict())
+
+
+@admin_bp.route('/api/miembros/<int:miembro_id>', methods=['DELETE'])
+@login_required
+def api_eliminar_miembro(miembro_id: int):
+    miembro = MiembroEquipo.query.get_or_404(miembro_id)
+    db.session.delete(miembro)
+    db.session.commit()
+    return jsonify({'success': True})
