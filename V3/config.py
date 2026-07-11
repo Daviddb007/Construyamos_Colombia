@@ -35,9 +35,9 @@ class Config:
     WTF_CSRF_ENABLED: bool = True
     SEND_FILE_MAX_AGE_DEFAULT: int = 31536000  # 1 year for static files
 
-    # Admin
-    ADMIN_USER: str = os.environ.get("ADMIN_USER", "admin")
-    ADMIN_PASS: str = os.environ.get("ADMIN_PASS", "admin")
+    # Admin (sin fallbacks por seguridad — deben estar en .env)
+    ADMIN_USER: str = os.environ.get("ADMIN_USER", "")
+    ADMIN_PASS: str = os.environ.get("ADMIN_PASS", "")
     ADMIN_API_TOKEN: str = os.environ.get("ADMIN_API_TOKEN", "")
 
     # Rate limiting
