@@ -2,19 +2,23 @@ from __future__ import annotations
 
 from typing import Any
 
-from app import db
+from app import cache, db
 from app.models.participacion import Participacion
 from app.models.sector import Sector
-from app.models.politica import Politica
 from sqlalchemy import func
 
 
 def get_estadisticas_generales() -> dict[str, Any]:
-    return {
+    data = cache.get('estadisticas_generales')
+    if data is not None:
+        return data
+    data = {
         'total_participaciones': Participacion.query.count(),
         'total_departamentos': _count_distinct_departamentos(),
         'total_sectores': Sector.query.filter_by(activo=True).count(),
     }
+    cache.set('estadisticas_generales', data, timeout=3600)
+    return data
 
 
 def get_estadisticas_completas() -> dict[str, Any]:

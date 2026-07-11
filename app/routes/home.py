@@ -7,11 +7,11 @@ home_bp = Blueprint('home', __name__)
 
 
 @home_bp.route('/')
-@cache.cached(timeout=300)
+@cache.cached(timeout=3600)
 def index():
     """Render home page with high-level stats.
 
-    Cached for 5 minutes to reduce database load.
+    Cached for 1 hour to reduce database load.
     """
     stats = get_estadisticas_generales()
     return render_template('home.html', **stats)
