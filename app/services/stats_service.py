@@ -4,6 +4,7 @@ from typing import Any
 
 from app import cache, db
 from app.models.participacion import Participacion
+from app.models.politica import Politica
 from app.models.sector import Sector
 from sqlalchemy import func
 
